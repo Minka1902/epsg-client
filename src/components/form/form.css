@@ -1,0 +1,91 @@
+.form {
+    width: 75%;
+    margin: 20px 12.5% 15px;
+}
+
+.input-title {
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #2F71E5;
+    margin-bottom: 8px;
+}
+
+.form__input {
+    width: 100%;
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
+    color: black;
+    border: none;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.2);
+    margin: 0;
+    margin-bottom: 3px;
+}
+
+.form__button {
+    width: 100%;
+    height: 30px;
+    border-radius: 2px;
+    border: none;
+    padding: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    margin: 8px 0 0 0;
+    color: #FFFFFF;
+    background: #2F71E5;
+    box-shadow: 0px 5px 15px rgba(14, 26, 57, 0.2);
+    border-radius: 100px;
+    cursor: pointer;
+}
+
+.form__button_invalid {
+    width: 100%;
+    height: 30px;
+    border-radius: 2px;
+    border: none;
+    padding: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    margin: 8px 0 15px 0;
+    background: #E6E8EB;
+    color: #B6BCBF;
+    box-shadow: 0px 5px 15px rgba(14, 26, 57, 0.2);
+    border-radius: 100px;
+    cursor: default;
+}
+
+.error-massage {
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #FF0000;
+    margin: 0 0 13px 0;
+    padding: 0;
+    visibility: hidden;
+}
+
+.error-massage_visible {
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #FF0000;
+    margin: 0 0 13px 0;
+    padding: 0;
+}
