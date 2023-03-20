@@ -2,10 +2,10 @@ import 'regenerator-runtime';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import * as L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl } from "react-leaflet";
 import React from 'react';
 import Topography from 'leaflet-topography';
-import options from '../../constants/mapOptions';
+import { options, maps } from '../../constants/mapOptions';
 
 function SetViewOnClick({ coords }) {
   const map = useMap();
@@ -14,15 +14,15 @@ function SetViewOnClick({ coords }) {
   return null;
 };
 
-export default function Map({ coords, address, setlatlngClick, isTopo }) {
-  const [mapData, setMapData] = React.useState(null);
+export default function Map({ coords, address }) {
+  const { BaseLayer } = LayersControl;
+  const [position, setPosition] = React.useState(null)
 
   const LocationFinderDummy = () => {
     const map = useMapEvents({
       click(evt) {
         Topography.getTopography(evt.latlng, options)
           .then((data) => {
-            // setlatlngClick(data.elevation);
             console.log(`Elevation: ${data.elevation}`);
           })
           .catch((err) => {
@@ -33,6 +33,17 @@ export default function Map({ coords, address, setlatlngClick, isTopo }) {
     return null;
   };
 
+  // function LocationMarker() {
+  //   const map = useMapEvents({
+  //     click() {
+  //       map.locate()
+  //     },
+  //     locationfound(e) {
+  //       setPosition(e.latlng)
+  //       map.flyTo(e.latlng, map.getZoom())
+  //     },
+  //   })
+  // }
   // React.useEffect(() => {
   //   const query = `[out:json];way["contour"="500"](${bBox});(._;>;);out body;`;
 
@@ -52,7 +63,7 @@ export default function Map({ coords, address, setlatlngClick, isTopo }) {
   return (
     <div id='map'>
       <MapContainer
-        center={coords}
+        center={position ? position : coords}
         zoom={14}
         minZoom={3}
         maxZoom={18}
@@ -63,6 +74,8 @@ export default function Map({ coords, address, setlatlngClick, isTopo }) {
         <SetViewOnClick coords={coords} />
         <LocationFinderDummy />
 
+        {/* <LocationMarker /> */}
+
         <Marker
           position={coords}
           icon={new L.Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [0, -35] })}
@@ -72,13 +85,20 @@ export default function Map({ coords, address, setlatlngClick, isTopo }) {
           </Popup>
         </Marker>
 
-        <TileLayer
-          className='TileLayer'
-          url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        />
-        {isTopo ? <GeoJSON data={mapData} style={{ fillOpacity: 0, color: 'black' }} /> : <></>}
-
+        <LayersControl>
+          {maps.map((map, index) => {
+            if (map.valid) {
+              return (
+                <BaseLayer checked={map.checked} name={map.name} key={index}>
+                  <TileLayer
+                    className='TileLayer'
+                    url={map.url}
+                    attribution={map.attribution}
+                  />
+                </BaseLayer>);
+            }
+          })}
+        </LayersControl>
       </MapContainer>
     </div>
   );

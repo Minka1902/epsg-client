@@ -17,10 +17,10 @@
 
 .app__coordinates {
     width: 80%;
-    margin: 0 10% 15px;
+    margin: 0 10% 0;
     color: rgba(0, 0, 0, 0.4);
     font-size: 16px;
-    line-height: 15px;
+    line-height: 17px;
 }
 
 .app__location-info {
