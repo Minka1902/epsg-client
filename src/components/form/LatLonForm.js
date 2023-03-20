@@ -8,10 +8,7 @@ export default function LatLonForm(props) {
     const [isLatitudeCorrect, setIsLatitudeCorrect] = React.useState(true);
     const [isValid, setIsValid] = React.useState(false);
     const [fromEpsg, setFromEpsg] = React.useState('29191');
-    // const [toEpsg, setToEpsg] = React.useState('');
-    // eslint-disable-next-line
     const [isFromEpsgCorrect, setIsFromEpsgCorrect] = React.useState(true);
-    // const [isToEpsgCorrect, setIsToEpsgCorrect] = React.useState(true);
 
     const onFormSubmit = (evt) => {
         evt.preventDefault();
@@ -19,13 +16,28 @@ export default function LatLonForm(props) {
     };
 
     const checkCoordinate = (coordinate) => {
-        // const coordinateRegExp = /^(?:0|[1-9][0-9]*)\.[0-9]+$/;
-        // if (coordinateRegExp.test(coordinate)) {
-        if (coordinate.length !== 0) {
-            return true;
-            // }
-        } return false;
+        const coordinateRegExp = /^(?:0|[1-9][0-9]*)\.[0-9]+$/;
+        if (fromEpsg === '4326') {
+            if (coordinateRegExp.test(coordinate)) {
+                if (coordinate.length !== 0) {
+                    return true;
+                }
+            } return false;
+        }
+        return true
     };
+
+    const checkEpsg = (epsg) => {
+        if (epsg.length === 0) {
+            return true;
+        } else {
+            if ((epsg.length < 4) || (epsg.length > 5)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
 
     // ! Validating the form
     React.useEffect(() => {
@@ -42,7 +54,9 @@ export default function LatLonForm(props) {
         }
         if (isLongtitudeCorrect || isLatitudeCorrect) {
             if (isLongtitudeCorrect && isLatitudeCorrect) {
-                setIsValid(true);
+                if (checkEpsg(fromEpsg)) {
+                    setIsValid(true);
+                }
             } else {
                 setIsValid(false);
             }
@@ -50,7 +64,15 @@ export default function LatLonForm(props) {
             setIsValid(false);
         }
         // eslint-disable-next-line
-    }, [longtitude, latitude, fromEpsg]);
+    }, [longtitude, latitude]);
+
+    React.useEffect(() => {
+        if (checkEpsg(fromEpsg)) {
+            setIsFromEpsgCorrect(true);
+        } else {
+            setIsFromEpsgCorrect(false);
+        }
+    }, [fromEpsg])
 
     return (
         <form id="lat-lon-form" className="form" onSubmit={onFormSubmit}>
@@ -67,19 +89,6 @@ export default function LatLonForm(props) {
                 onChange={(evt) => setFromEpsg(evt.currentTarget.value)}
             />
             <p className={`error-massage${isFromEpsgCorrect ? '' : '_visible'}`}>EPSG incorrect</p>
-
-            {/* <input
-                className="form__input"
-                placeholder="Enter EPSG code (default 4326)"
-                id="epsg-input2"
-                type="text"
-                name="epsgInput2"
-                minLength="2"
-                maxLength="40"
-                value={toEpsg}
-                onChange={(evt) => setToEpsg(evt.currentTarget.value)}
-            />
-            <p className={`error-massage${isToEpsgCorrect ? '' : '_visible'}`}>EPSG incorrect</p> */}
 
             <h3 className='input-title'>Longtitude/X coordinate</h3>
             <input
