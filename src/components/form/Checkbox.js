@@ -1,5 +1,6 @@
 import React from "react";
 
+// ! <Checkbox onToggle={onToggle} text={"Hello world!"} />
 export default function Checkbox({ onToggle, text }) {
     const [checked, setChecked] = React.useState(false);
 

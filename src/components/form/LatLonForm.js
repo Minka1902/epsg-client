@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function LatLonForm(props) {
-    const { onSubmit } = props;
+    const { onCoordinatesSubmit, onEpsgSubmit } = props;
     const [longtitude, setLongtitude] = React.useState('');
     const [isLongtitudeCorrect, setIsLongtitudeCorrect] = React.useState(true);
     const [latitude, setLatitude] = React.useState('');
@@ -12,7 +12,15 @@ export default function LatLonForm(props) {
 
     const onFormSubmit = (evt) => {
         evt.preventDefault();
-        onSubmit(fromEpsg, parseFloat(longtitude), parseFloat(latitude));
+        if (evt.target.name === 'search-coord') {
+            if (fromEpsg === '') {
+                onCoordinatesSubmit('4326', parseFloat(longtitude), parseFloat(latitude));
+            } else {
+                onCoordinatesSubmit(fromEpsg, parseFloat(longtitude), parseFloat(latitude));
+            }
+        } else {
+            onEpsgSubmit({ coords: { longtitude: parseFloat(longtitude), latitude: parseFloat(latitude) } });
+        }
     };
 
     const checkCoordinate = (coordinate) => {
@@ -75,7 +83,7 @@ export default function LatLonForm(props) {
     }, [fromEpsg])
 
     return (
-        <form id="lat-lon-form" className="form" onSubmit={onFormSubmit}>
+        <form id="lat-lon-form" className="form">
             <h3 className='input-title'>EPSG:</h3>
             <input
                 className="form__input"
@@ -119,10 +127,14 @@ export default function LatLonForm(props) {
                 onChange={(evt) => setLatitude(evt.currentTarget.value)}
             />
             <p className={`error-massage${isLatitudeCorrect ? '' : '_visible'}`}>Latitude incorrect</p>
-
-            <button type="submit" className={`form__button${isValid ? '' : '_invalid'}`}>
-                Submit
-            </button>
+            <div className="form__button-container">
+                <button onClick={onFormSubmit} type="submit" name="search-coord" className={`form__button${isValid ? '' : '_invalid'}`}>
+                    Find Coordinates
+                </button>
+                <button onClick={onFormSubmit} type="submit" name="search-epsg" className={`form__button${isValid ? '' : '_invalid'}`}>
+                    Find Epsg Code
+                </button>
+            </div>
         </form>
     );
 }
