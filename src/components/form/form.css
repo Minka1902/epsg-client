@@ -1,6 +1,6 @@
 .form {
   width: 75%;
-  margin: 20px 12.5% 15px;
+  margin: 0 12.5% 15px;
 }
 
 .input-title {
@@ -10,7 +10,7 @@
   font-size: 12px;
   line-height: 15px;
   color: #2F71E5;
-  margin-bottom: 8px;
+  margin: 3px 0 12px 0;
 }
 
 .form__input {
@@ -38,7 +38,7 @@
 }
 
 .form__button {
-  width: 49%;
+  width: 100%;
   height: 30px;
   border-radius: 100px;
   border: none;
@@ -57,7 +57,7 @@
 }
 
 .form__button_invalid {
-  width: 49;
+  width: 100%;
   height: 30px;
   border-radius: 100px;
   border: none;
@@ -72,7 +72,7 @@
   background: #E6E8EB;
   color: #B6BCBF;
   box-shadow: 0px 5px 15px rgba(14, 26, 57, 0.2);
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .error-massage {
@@ -103,48 +103,4 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 auto 16px;
-}
-
-.checkbox-input {
-  position: absolute;
-  opacity: 0;
-}
-
-.checkbox-custom {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-}
-
-.checkbox-custom:before {
-  content: '';
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin: 2px;
-  background-color: #fff;
-  border-radius: 2px;
-  transition: background-color 0.2s ease;
-}
-
-.checkbox-input:checked+.checkbox-custom:before {
-  background-color: #1d6b99;
-}
-
-.checkbox-text {
-  font-family: 'Inter', Arial, sans-serif;
-  margin-left: 4px;
-  color: rgba(0, 0, 0, 0.4);
 }

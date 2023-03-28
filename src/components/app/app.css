@@ -17,18 +17,28 @@
 
 .app__coordinates {
     width: 80%;
-    margin: 0 10% 0;
+    margin: 2px 10% 5px;
     color: rgba(0, 0, 0, 0.4);
     font-size: 16px;
     line-height: 17px;
+    text-align: center;
+}
+
+.app__coordinates_modified{
+    width: 80%;
+    margin: 10px 10% 0px;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 16px;
+    line-height: 17px;
+    text-align: center;
 }
 
 .app__location-info {
     width: 80%;
-    margin: 15px 10%;
+    height: 90px;
+    margin: 10px 10%;
     color: rgba(0, 0, 0, 0.4);
     text-align: left;
-    font-size: 400;
     line-height: 18px;
 }
 
@@ -39,4 +49,32 @@
     width: 90px;
     text-align: center;
     margin: 0 auto 10px auto;
+}
+
+.app__map-pointer {
+    position: relative;
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    z-index: 10000000000;
+    width: 30px;
+    height: 30px;
+}
+
+.app__button {
+    width: 75%;
+    height: 30px;
+    border-radius: 100px;
+    border: none;
+    padding: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    margin: 0 0 10px 0;
+    color: #FFFFFF;
+    background: #2F71E5;
+    box-shadow: 0px 5px 15px rgba(14, 26, 57, 0.2);
+    cursor: pointer;
 }

@@ -4,77 +4,86 @@ import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import * as L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl } from "react-leaflet";
 import React from 'react';
-import Topography from 'leaflet-topography';
-import { options, maps } from '../../constants/mapOptions';
+import { maps } from '../../constants/mapOptions';
 
-function SetViewOnClick({ coords }) {
+function SetViewOnClick({ coords, isActive, setViewFalse }) {
   const map = useMap();
-  map.setView(coords, 18);
+  if (isActive) {
+    map.flyTo(coords, 18);
+    setViewFalse();
+  }
 
   return null;
 };
 
-export default function Map({ coords, address }) {
-  const { BaseLayer } = LayersControl;
-  const [position, setPosition] = React.useState(null)
+const greenMarker = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [0, -35],
+  tooltipAnchor: [16, -28],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
 
-  const LocationFinderDummy = () => {
+export default function Map({ coords, address, markerData, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
+  const { BaseLayer } = LayersControl;
+
+  const ClickLocation = () => {
     const map = useMapEvents({
       click(evt) {
-        Topography.getTopography(evt.latlng, options)
-          .then((data) => {
-            console.log(`Elevation: ${data.elevation}`);
-          })
-          .catch((err) => {
-            console.log(`Map click error: ${err}`);
-          });
+        if (isClickable) {
+          findEpsgClick({ latitude: evt.latlng.lat, longtitude: evt.latlng.lng })
+        } else {
+          if (didCopy) {
+            copyClicked(evt.latlng)
+          }
+        }
       },
     });
     return null;
   };
 
-  // function LocationMarker() {
-  //   const map = useMapEvents({
-  //     click() {
-  //       map.locate()
-  //     },
-  //     locationfound(e) {
-  //       setPosition(e.latlng)
-  //       map.flyTo(e.latlng, map.getZoom())
-  //     },
-  //   })
-  // }
-  // React.useEffect(() => {
-  //   const query = `[out:json];way["contour"="500"](${bBox});(._;>;);out body;`;
+  function Locate() {
+    const map = useMapEvents({
+      click() {
+        map.locate()
+      },
+      locationfound(e) {
+        map.flyTo(e.latlng, map.getZoom())
+      },
+    })
+  }
 
-  //   osmApiOBJ.topo(query)
-  //     .then((data) => {
-  //       if (data) {
-  //         console.log(data);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       if (err) {
-  //         console.log(`topo Error: ${err}`);
-  //       }
-  //     })
-  // }, []);
+  function Pointer() {
+    const map = useMapEvents({
+      click(evt) {
+        if (evt) {
+          const offsetX = evt.originalEvent.currentTarget.offsetHeight / 2;
+          const offsetY = evt.originalEvent.currentTarget.offsetWidth / 2;
+          var layerPoint = L.point(offsetX, offsetY);
+          var latlng = map.layerPointToLatLng(layerPoint);
+        }
+      }
+    })
+  }
+
 
   return (
     <div id='map'>
       <MapContainer
-        center={position ? position : coords}
-        zoom={14}
+        center={coords}
+        zoom={4}
         minZoom={3}
         maxZoom={18}
         scrollWheelZoom={true}
         doubleClickZoom={true}
         dragging={true}
       >
-        <SetViewOnClick coords={coords} />
-        <LocationFinderDummy />
-
-        {/* <LocationMarker /> */}
+        <Pointer />
+        {children}
+        <SetViewOnClick coords={coords} isActive={isView} setViewFalse={setViewFalse} />
+        {isClickable || didCopy ? <ClickLocation /> : <></>}
 
         <Marker
           position={coords}
@@ -84,6 +93,14 @@ export default function Map({ coords, address }) {
             {address ? address : `We dont have any information about this location.`}
           </Popup>
         </Marker>
+
+        {markerData.map((marker, index) => (
+          <Marker key={index} icon={greenMarker} position={[marker.corespondingLocation.longtitude, marker.corespondingLocation.latitude]}>
+            <Popup>
+              <p>{marker.epsg}, {marker.distance} km <br />Lat:{marker.corespondingLocation.latitude}, Lng:{marker.corespondingLocation.longtitude} </p>
+            </Popup>
+          </Marker>
+        ))}
 
         <LayersControl>
           {maps.map((map, index) => {

@@ -3,16 +3,51 @@ import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
-import Table from '../table/table';
+import Table from '../table/Table';
+import ButtonBox from '../buttonBox/ButtonBox';
+import Dropdown from '../dropdown/Dropdown';
+import EpsgForm from '../form/EpsgForm'
+import Pointer from '../../images/pointer.svg';
 
 export default function App() {
-  const [coords, setCoords] = React.useState([35.9308, 14.3845]);
+  const [coords, setCoords] = React.useState([31.89291, 35.03254]);
+  const [copyCoords, setCopyCoords] = React.useState(null);
   const [address, setAddress] = React.useState('');
   const [epsgCoords, setEpsgCoords] = React.useState([]);
   const [fromEpsg, setFromEpsg] = React.useState('');
-  const [epsgTable, setEpsgTable] = React.useState([])
-  const epsg = require('epsg')
+  const [epsgTable, setEpsgTable] = React.useState([]);
+  const [isClickable, setIsClickable] = React.useState(false);
+  const [isView, setIsView] = React.useState(false);
+  const [didCopy, setDidCopy] = React.useState(false);
+  const [isPreloader, setIsPreloader] = React.useState(false);
+  const [isPointer, setIsPointer] = React.useState(false);
+  const epsg = require('epsg');
+  // const [shouldRecenterMe, setShouldRecenterMe] = React.useState(false);
+  // const [shouldRecenterMarker, setShouldRecenterMarker] = React.useState(false);
+  // const [isClickedLocation, setIsClickedLocation] = React.useState(false);
+  // const setShouldRecenterMeTrue = () => setShouldRecenterMe(true);
 
+  const togglePointer = () => setIsPointer(!isPointer);
+
+  const setViewTrue = () => setIsView(true);
+
+  const setViewFalse = () => setIsView(false);
+
+  const setIsClickableTrue = () => setIsClickable(true);
+
+  const setDidCopyTrue = () => setDidCopy(true);
+
+  const copyCoordsClick = (coords) => {
+    setCopyCoords(coords);
+    setDidCopy(false);
+  }
+
+  const clickLocation = ({ latitude, longtitude }) => {
+    setIsClickable(false);
+    findEpsgCodes({ coordins: { longtitude: longtitude, latitude: latitude } });
+  }
+
+  // ! converts location between different EPSG codes
   const epsgConvert = (fromEpsg, x, y, isPoint0) => {
     let fromProj = epsg[`EPSG:${fromEpsg}`];
     let toProj = epsg[`EPSG:4326`];
@@ -37,10 +72,12 @@ export default function App() {
     }
   }
 
+  // ! get the info about the location found
   const onCoordinateSubmit = ({ x, y, is4326 = false }) => {
     osmApiOBJ.searchNewCoordinates(is4326 ? [x, y] : [y, x])
       .then((data) => {
         if (data) {
+          setIsView(true);
           setCoords([Number.parseFloat(data.lat), Number.parseFloat(data.lon)]);
           setAddress(data.display_name);
         }
@@ -52,16 +89,7 @@ export default function App() {
       });
   }
 
-  React.useEffect(() => {
-    onCoordinateSubmit({ x: 35.02364, y: 31.91688 });   // eslint-disable-next-line
-  }, []);
-
-  const arrayByDistance = (arr) => {
-    arr.sort((a, b) => a.distance - b.distance);
-    return arr;
-  }
-
-  // ! Extaracts starting point from projection.
+  // ! Extaracts starting point from projection
   const getX0Y0 = (proj) => {
     const x0start = proj.indexOf(`+x_0=`) + 5;
     const x0end = proj.indexOf(` +`, x0start);
@@ -84,17 +112,21 @@ export default function App() {
 
   // ! Calculates distance between 2 locations(lat, lng)
   const calcDistance = ({ lat1, lon1, lat2, lon2 }) => {
-    const R = 6371; // km
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const latitude1 = toRad(lat1);
-    const latitude2 = toRad(lat2);
-
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(latitude1) * Math.cos(latitude2);
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c;
-    return `${d}`;
+    const distance = R * c; // Distance in km
+    return (distance.toFixed(3)) / 2;
+  }
+
+  // ! Converts numeric degrees to radians
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
   }
 
   // ! Creates the 0 point for the object
@@ -107,62 +139,111 @@ export default function App() {
     return { y: undefined, x: undefined }
   }
 
-  // ! Converts numeric degrees to radians
-  const toRad = (value) => {
-    return value * Math.PI / 180;
-  }
-
-  const findEpsgCodes = ({ coords }) => {
+  // ! Creates a list of EPSG codes and renders the closest onces
+  const findEpsgCodes = ({ coordins }) => {
+    setIsPreloader(true);
     let coordinates;
     let arr = [];
     let newEpsgObj = {};
-    for (let i = 0; i < 30000; i++) {
+    for (let i = 26; i < 33000; i++) {
       newEpsgObj.epsg = `EPSG:${2000 + i}`;
       const fromProj = epsg[`EPSG:${2000 + i}`];
-      const toProj = epsg[`EPSG:4326`];
-      if (toProj && fromProj) {
+      const proj4326 = epsg[`EPSG:4326`];
+      if (proj4326 && fromProj) {
         newEpsgObj.epsgPoint0 = createPoint0(2000 + i);
-        if (toProj === fromProj) {
-          coordinates = proj4(fromProj, [coords.latitude, coords.longtitude]);
+        if (proj4326 === fromProj) {
+          coordinates = proj4(fromProj, [coordins.latitude, coordins.longtitude]);
           newEpsgObj.corespondingLocation = { latitude: coordinates[0].toFixed(5), longtitude: coordinates[1].toFixed(5) };
         } else {
           if (newEpsgObj.epsgPoint0.x && newEpsgObj.epsgPoint0.y) {
-            coordinates = proj4(fromProj, toProj, [coords.latitude, coords.longtitude]);
-            newEpsgObj.corespondingLocation = { latitude: coordinates[0].toFixed(5), longtitude: coordinates[1].toFixed(5) };
+            if (newEpsgObj.epsgPoint0.x !== Infinity || newEpsgObj.epsgPoint0.y !== Infinity) {
+              coordinates = proj4(fromProj, proj4326, [coordins.latitude, coordins.longtitude]);
+              newEpsgObj.corespondingLocation = { latitude: coordinates[0].toFixed(5), longtitude: coordinates[1].toFixed(5) };
+              newEpsgObj.distance = calcDistance({
+                lat1: newEpsgObj.corespondingLocation.latitude,
+                lon1: newEpsgObj.corespondingLocation.longtitude,
+                lat2: coordins.latitude,
+                lon2: coordins.longtitude
+              });
+            }
           }
         }
-        newEpsgObj.distance = calcDistance({
-          lat1: newEpsgObj.epsgPoint0.y,
-          lon1: newEpsgObj.epsgPoint0.x,
-          lat2: coords.latitude,
-          lon2: coords.longtitude
-        });
-        arr[i] = Object.assign({}, newEpsgObj);
+        addElementToArray(arr, newEpsgObj);
         newEpsgObj = {};
-      } else {
-        console.log(`Error! EPSG CODE ${2000 + i} NON-EXISTING!`)
       }
     }
-    arrayByDistance(arr);
+    arr.sort((a, b) => a.distance - b.distance);
+    // createMarkerData([arr[0], arr[1], arr[2], arr[3], arr[4]]);
     setEpsgTable([arr[0], arr[1], arr[2], arr[3], arr[4]]);
+    setIsPreloader(false);
   }
+
+  // ! Checks if the element should be added to the array
+  const addElementToArray = (arr, elem) => {
+    let shouldEnter = true;
+    if (elem.epsgPoint0 && elem.corespondingLocation) {
+      if (elem.distance < 10000) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].distance === elem.distance) {
+            shouldEnter = false;
+            break;
+          }
+        }
+        if (shouldEnter) {
+          arr[arr.length] = Object.assign({}, elem);
+        }
+      }
+    }
+  }
+
+  const createMarkerData = (arr) => {
+    let tempArr = arr;
+    for (let i = 0; i < tempArr.length; i++) {
+
+    }
+  }
+
+  // ! sets the map for the first time
+  React.useEffect(() => {
+    onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
+  }, []);
 
   return (
     <div id='content'>
       <Map coords={coords}
         address={address}
-      />
+        isClickable={isClickable}
+        findEpsgClick={clickLocation}
+        copyClicked={copyCoordsClick}
+        didCopy={didCopy}
+        isView={isView}
+        setViewFalse={setViewFalse}
+        markerData={epsgTable}>
+        {isPointer ? <img src={Pointer} alt='Map pointer' className='app__map-pointer' /> : <></>}
+      </Map>
       <div className='app__conteiner'>
-        <LatLonForm onEpsgSubmit={findEpsgCodes}
-          onCoordinatesSubmit={epsgConvert}
+        <ButtonBox isModi={copyCoords ? false : true}
+          didCopy={didCopy}
+          isPointer={isPointer}
+          didEPSG={isClickable}
+          togglePointer={togglePointer}
+          onRecenterMarker={setViewTrue}
+          copyLocationClickable={setDidCopyTrue}
+          onChooseEpsgLocation={setIsClickableTrue}
         />
-        <h3 className='app__coordinates'>Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
-        {epsgCoords[1] ? <h3 className='app__coordinates'>coordinates to EPSG:{fromEpsg}: <br />{epsgCoords[0]}, {epsgCoords[1]}</h3> : <></>}
+        {copyCoords ? <h2 className='app__coordinates'>Lat: {copyCoords.lat.toFixed(5)}, Lng: {copyCoords.lng.toFixed(5)}</h2> : <></>}
+        <Dropdown text='Lat/Lng'>
+          <LatLonForm onCoordinatesSubmit={onCoordinateSubmit} />
+        </Dropdown>
+        <Dropdown text='Find coordinates by EPSG'>
+          <EpsgForm onCoordinatesSubmit={epsgConvert} />
+        </Dropdown>
+
+        <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
+        {epsgCoords[1] === coords[1] ? <h3 className='app__coordinates'>coordinates to EPSG:{fromEpsg}: <br />{epsgCoords[0]}, {epsgCoords[1]}</h3> : <></>}
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
-        {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
+        {epsgTable[4] ? <Table data={epsgTable} isPreloader={isPreloader} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
       </div>
-    </div>
+    </div >
   );
 }
-
-

@@ -1,13 +1,9 @@
 import React from "react";
 
 // ! <Checkbox onToggle={onToggle} text={"Hello world!"} />
-export default function Checkbox({ onToggle, text }) {
-    const [checked, setChecked] = React.useState(false);
-
-    const handleToggle = () => {
-        const newValue = !checked;
-        setChecked(newValue);
-        onToggle(newValue);
+export default function Checkbox({ onToggle, text, checked }) {
+    const handleToggle = (evt) => {
+        onToggle(evt);
     };
 
     return (

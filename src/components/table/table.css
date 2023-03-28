@@ -1,5 +1,5 @@
 .table-container {
-  margin: 0 auto;
+  margin: 10px auto 0;
   width: 80%;
 }
 
@@ -10,7 +10,7 @@ table {
 }
 
 thead {
-  background-color: #2f71e5;
+  background-color: #3f74d1;
   color: white;
   font-weight: bold;
 }

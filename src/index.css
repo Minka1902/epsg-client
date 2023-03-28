@@ -1,10 +1,23 @@
+/* ! map */
 @import url('./components/map/map.css');
 
+/* ! app */
 @import url('./components/app/app.css');
 
+/* ! form */
 @import url('./components/form/form.css');
 
+/* ! table */
 @import url('./components/table/table.css');
+
+/* ! button box */
+@import url('./components/buttonBox/buttonBox.css');
+
+/* ! preloader */
+@import url('./components/preloader/preloader.css');
+
+/* ! dropdown */
+@import url('./components/dropdown/dropdown.css');
 
 body {
   margin: 0;
