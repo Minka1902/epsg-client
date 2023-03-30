@@ -47,3 +47,15 @@
     margin: 8px;
     cursor: pointer;
 }
+
+.button-box__button_disabled {
+    width: 20px;
+    height: 20px;
+    background-color: #8c9096;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 8px;
+    cursor: not-allowed;
+}

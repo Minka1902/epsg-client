@@ -19,15 +19,28 @@ export default function App() {
   const [isClickable, setIsClickable] = React.useState(false);
   const [isView, setIsView] = React.useState(false);
   const [didCopy, setDidCopy] = React.useState(false);
-  const [isPreloader, setIsPreloader] = React.useState(false);
   const [isPointer, setIsPointer] = React.useState(false);
+  const [isRuler, setIsRuler] = React.useState(false);
   const epsg = require('epsg');
-  // const [shouldRecenterMe, setShouldRecenterMe] = React.useState(false);
+  const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
+  const [epsgForm, setEpsgForm] = React.useState({});
   // const [shouldRecenterMarker, setShouldRecenterMarker] = React.useState(false);
   // const [isClickedLocation, setIsClickedLocation] = React.useState(false);
   // const setShouldRecenterMeTrue = () => setShouldRecenterMe(true);
 
-  const togglePointer = () => setIsPointer(!isPointer);
+  const togglePointer = () => {
+    setIsPointer(!isPointer);
+    if (isRuler === isPointer && isRuler) {
+      setIsRuler(!isPointer);
+    }
+  };
+
+  const toggleRuler = () => {
+    setIsPointer(!isRuler);
+    setIsRuler(!isRuler);
+  };
+
+  const setIsEpsgFormFilledFalse = () => setIsEpsgFormFilled(false);
 
   const setViewTrue = () => setIsView(true);
 
@@ -42,19 +55,21 @@ export default function App() {
     setDidCopy(false);
   }
 
+  // ! Sends coordinates to the findEpsgCodes function
   const clickLocation = ({ latitude, longtitude }) => {
     setIsClickable(false);
-    findEpsgCodes({ coordins: { longtitude: longtitude, latitude: latitude } });
+    findEpsgCodes({ coordins: { longtitude: longtitude, latitude: latitude }, form: epsgForm });
+    setIsEpsgFormFilled(false);
   }
 
-  // ! converts location between different EPSG codes
-  const epsgConvert = (fromEpsg, x, y, isPoint0) => {
+  // ! Converts location between different EPSG codes
+  const epsgConvert = ({ fromEpsg, x, y, isX }) => {
+    setIsEpsgFormFilled(true);
     let fromProj = epsg[`EPSG:${fromEpsg}`];
     let toProj = epsg[`EPSG:4326`];
     let coordinates;
-    if (isPoint0) {
-      coordinates = proj4(fromProj, toProj, [y, x]);
-      return { y: coordinates[0], x: coordinates[1] };
+    if (isX) {
+      setEpsgForm({ x: x, y: y });
     } else {
       setEpsgCoords([x, y]);
       setFromEpsg(fromEpsg);
@@ -72,7 +87,7 @@ export default function App() {
     }
   }
 
-  // ! get the info about the location found
+  // ! Get the info about the location found
   const onCoordinateSubmit = ({ x, y, is4326 = false }) => {
     osmApiOBJ.searchNewCoordinates(is4326 ? [x, y] : [y, x])
       .then((data) => {
@@ -89,30 +104,9 @@ export default function App() {
       });
   }
 
-  // ! Extaracts starting point from projection
-  const getX0Y0 = (proj) => {
-    const x0start = proj.indexOf(`+x_0=`) + 5;
-    const x0end = proj.indexOf(` +`, x0start);
-    const y0start = proj.indexOf(`+y_0=`) + 5;
-    const y0end = proj.indexOf(` +`, y0start);
-    let xCoord = '', yCoord = '';
-    if (x0start !== y0start) {
-
-      for (let i = 0; i < (x0end - x0start); i++) {
-        xCoord += proj[x0start + i];
-      }
-
-      for (let i = 0; i < (y0end - y0start); i++) {
-        yCoord += proj[y0start + i];
-      }
-
-      return { y0: parseFloat(yCoord), x0: parseFloat(xCoord) };
-    }
-  }
-
   // ! Calculates distance between 2 locations(lat, lng)
   const calcDistance = ({ lat1, lon1, lat2, lon2 }) => {
-    const R = 6371; // Radius of the earth in km
+    const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
@@ -121,7 +115,7 @@ export default function App() {
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distance in km
-    return (distance.toFixed(3)) / 2;
+    return (distance.toFixed(3));
   }
 
   // ! Converts numeric degrees to radians
@@ -129,81 +123,68 @@ export default function App() {
     return deg * (Math.PI / 180);
   }
 
-  // ! Creates the 0 point for the object
-  const createPoint0 = (fromEpsg) => {
-    let fromProj = epsg[`EPSG:${fromEpsg}`];
-    const xy = getX0Y0(fromProj);
-    if (xy) {
-      return epsgConvert(fromEpsg, xy.x0, xy.y0, true);
-    }
-    return { y: undefined, x: undefined }
-  }
-
   // ! Creates a list of EPSG codes and renders the closest onces
-  const findEpsgCodes = ({ coordins }) => {
-    setIsPreloader(true);
+  const findEpsgCodes = ({ coordins, form }) => {
     let coordinates;
     let arr = [];
+    const { x, y } = form;
     let newEpsgObj = {};
-    for (let i = 26; i < 33000; i++) {
+    for (let i = 0; i < 33000; i++) {
       newEpsgObj.epsg = `EPSG:${2000 + i}`;
       const fromProj = epsg[`EPSG:${2000 + i}`];
-      const proj4326 = epsg[`EPSG:4326`];
-      if (proj4326 && fromProj) {
-        newEpsgObj.epsgPoint0 = createPoint0(2000 + i);
-        if (proj4326 === fromProj) {
+      const toProj4326 = epsg[`EPSG:4326`];
+      if (fromProj) {
+        if (toProj4326 === fromProj) {
           coordinates = proj4(fromProj, [coordins.latitude, coordins.longtitude]);
-          newEpsgObj.corespondingLocation = { latitude: coordinates[0].toFixed(5), longtitude: coordinates[1].toFixed(5) };
+          newEpsgObj.wgs84Location = { latitude: coordinates[0].toFixed(5), longtitude: coordinates[1].toFixed(5) };
         } else {
-          if (newEpsgObj.epsgPoint0.x && newEpsgObj.epsgPoint0.y) {
-            if (newEpsgObj.epsgPoint0.x !== Infinity || newEpsgObj.epsgPoint0.y !== Infinity) {
-              coordinates = proj4(fromProj, proj4326, [coordins.latitude, coordins.longtitude]);
-              newEpsgObj.corespondingLocation = { latitude: coordinates[0].toFixed(5), longtitude: coordinates[1].toFixed(5) };
-              newEpsgObj.distance = calcDistance({
-                lat1: newEpsgObj.corespondingLocation.latitude,
-                lon1: newEpsgObj.corespondingLocation.longtitude,
-                lat2: coordins.latitude,
-                lon2: coordins.longtitude
-              });
-            }
-          }
+          coordinates = proj4(fromProj, toProj4326, [x, y]);
+          newEpsgObj.wgs84Location = { latitude: coordinates[1].toFixed(5), longtitude: coordinates[0].toFixed(5) };
+          newEpsgObj.distance = calcDistance({
+            lat1: newEpsgObj.wgs84Location.latitude,
+            lon1: newEpsgObj.wgs84Location.longtitude,
+            lat2: coordins.latitude,
+            lon2: coordins.longtitude
+          });
         }
         addElementToArray(arr, newEpsgObj);
         newEpsgObj = {};
       }
     }
     arr.sort((a, b) => a.distance - b.distance);
-    // createMarkerData([arr[0], arr[1], arr[2], arr[3], arr[4]]);
     setEpsgTable([arr[0], arr[1], arr[2], arr[3], arr[4]]);
-    setIsPreloader(false);
   }
 
   // ! Checks if the element should be added to the array
   const addElementToArray = (arr, elem) => {
     let shouldEnter = true;
-    if (elem.epsgPoint0 && elem.corespondingLocation) {
-      if (elem.distance < 10000) {
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].distance === elem.distance) {
-            shouldEnter = false;
-            break;
-          }
+    if (elem.wgs84Location && elem.distance < 14000) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].distance === elem.distance) {
+          shouldEnter = false;
+          break;
         }
-        if (shouldEnter) {
-          arr[arr.length] = Object.assign({}, elem);
-        }
+      }
+      if (shouldEnter) {
+        arr[arr.length] = Object.assign({}, elem);
       }
     }
   }
 
-  const createMarkerData = (arr) => {
-    let tempArr = arr;
-    for (let i = 0; i < tempArr.length; i++) {
-
+  // ! Calculates the air distance between the pointer and the cursor
+  const rulerClick = (evt) => {
+    if (evt) {
+      const lat1 = evt.latlng.lat, lon1 = evt.latlng.lng;
+      const lat2 = evt.target.getCenter().lat, lon2 = evt.target.getCenter().lng;
+      const dist = calcDistance({ lat1, lon1, lat2, lon2 });
+      if (dist) {
+        setIsPointer(false);
+        setIsRuler(false);
+      }
     }
   }
 
-  // ! sets the map for the first time
+  // ! Sets the map for the first time
   React.useEffect(() => {
     onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
   }, []);
@@ -213,11 +194,15 @@ export default function App() {
       <Map coords={coords}
         address={address}
         isClickable={isClickable}
+        didCopy={didCopy}
+        isRuler={isRuler}
+        isView={isView}
+        isPointer={isPointer}
+        rulerClick={rulerClick}
         findEpsgClick={clickLocation}
         copyClicked={copyCoordsClick}
-        didCopy={didCopy}
-        isView={isView}
         setViewFalse={setViewFalse}
+        setIsEpsgFormFilledFalse={setIsEpsgFormFilledFalse}
         markerData={epsgTable}>
         {isPointer ? <img src={Pointer} alt='Map pointer' className='app__map-pointer' /> : <></>}
       </Map>
@@ -226,7 +211,10 @@ export default function App() {
           didCopy={didCopy}
           isPointer={isPointer}
           didEPSG={isClickable}
+          isRuler={isRuler}
+          isEpsgFormFilled={isEpsgFormFilled}
           togglePointer={togglePointer}
+          toggleRuler={toggleRuler}
           onRecenterMarker={setViewTrue}
           copyLocationClickable={setDidCopyTrue}
           onChooseEpsgLocation={setIsClickableTrue}
@@ -242,7 +230,7 @@ export default function App() {
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
         {epsgCoords[1] === coords[1] ? <h3 className='app__coordinates'>coordinates to EPSG:{fromEpsg}: <br />{epsgCoords[0]}, {epsgCoords[1]}</h3> : <></>}
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
-        {epsgTable[4] ? <Table data={epsgTable} isPreloader={isPreloader} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
+        {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
       </div>
     </div >
   );

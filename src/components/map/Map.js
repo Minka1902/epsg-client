@@ -2,9 +2,9 @@ import 'regenerator-runtime';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import * as L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import React from 'react';
-import { maps } from '../../constants/mapOptions';
+import { maps, greenMarker } from '../../constants/mapOptions';
 
 function SetViewOnClick({ coords, isActive, setViewFalse }) {
   const map = useMap();
@@ -14,26 +14,18 @@ function SetViewOnClick({ coords, isActive, setViewFalse }) {
   }
 
   return null;
-};
+}
 
-const greenMarker = new L.Icon({
-  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [0, -35],
-  tooltipAnchor: [16, -28],
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  shadowSize: [41, 41],
-});
-
-export default function Map({ coords, address, markerData, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
+export default function Map({ coords, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
+  const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
 
-  const ClickLocation = () => {
+  function ClickLocation() { // eslint-disable-next-line
     const map = useMapEvents({
       click(evt) {
         if (isClickable) {
-          findEpsgClick({ latitude: evt.latlng.lat, longtitude: evt.latlng.lng })
+          findEpsgClick({ latitude: evt.latlng.lat, longtitude: evt.latlng.lng });
+          setIsEpsgFormFilledFalse();
         } else {
           if (didCopy) {
             copyClicked(evt.latlng)
@@ -42,32 +34,34 @@ export default function Map({ coords, address, markerData, isClickable, findEpsg
       },
     });
     return null;
-  };
-
-  function Locate() {
-    const map = useMapEvents({
-      click() {
-        map.locate()
-      },
-      locationfound(e) {
-        map.flyTo(e.latlng, map.getZoom())
-      },
-    })
   }
 
-  function Pointer() {
+  // function Locate() {
+  //   const map = useMapEvents({
+  //     click() {
+  //       map.locate()
+  //     },
+  //     locationfound(e) {
+  //       map.flyTo(e.latlng, map.getZoom())
+  //     },
+  //   })
+  // }
+
+  function Pointer() {  // eslint-disable-next-line
     const map = useMapEvents({
-      click(evt) {
-        if (evt) {
-          const offsetX = evt.originalEvent.currentTarget.offsetHeight / 2;
-          const offsetY = evt.originalEvent.currentTarget.offsetWidth / 2;
-          var layerPoint = L.point(offsetX, offsetY);
-          var latlng = map.layerPointToLatLng(layerPoint);
+      mousemove: (evt) => {
+        if (evt.originalEvent.currentTarget) {
+          const { lat, lng } = evt.target.getCenter();
+          setRulerCoords([[lat, lng], [evt.latlng.lat, evt.latlng.lng]]);
         }
-      }
+      },
+      click: (evt) => {
+        if (evt && isRuler) {
+          rulerClick(evt);
+        }
+      },
     })
   }
-
 
   return (
     <div id='map'>
@@ -95,14 +89,19 @@ export default function Map({ coords, address, markerData, isClickable, findEpsg
         </Marker>
 
         {markerData.map((marker, index) => (
-          <Marker key={index} icon={greenMarker} position={[marker.corespondingLocation.longtitude, marker.corespondingLocation.latitude]}>
+          <Marker key={index} icon={greenMarker} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
             <Popup>
-              <p>{marker.epsg}, {marker.distance} km <br />Lat:{marker.corespondingLocation.latitude}, Lng:{marker.corespondingLocation.longtitude} </p>
+              <p>{marker.epsg}, {marker.distance} km <br />Lat:{marker.wgs84Location.latitude}, Lng:{marker.wgs84Location.longtitude} </p>
             </Popup>
           </Marker>
         ))}
 
-        <LayersControl>
+        {isRuler ?
+          <Polyline pathOptions={{ color: 'black', weight: '3', dashArray: '20, 20', dashOffset: '20' }} positions={rulerCoords} />
+          :
+          <></>}
+
+        <LayersControl>   {/* eslint-disable-next-line */}
           {maps.map((map, index) => {
             if (map.valid) {
               return (
