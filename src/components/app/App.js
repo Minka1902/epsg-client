@@ -3,7 +3,7 @@ import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
-// import Table from '../table/Table';
+import Table from '../table/Table';
 import ButtonBox from '../buttonBox/ButtonBox';
 import Dropdown from '../dropdown/Dropdown';
 import EpsgForm from '../form/EpsgForm'
@@ -235,7 +235,7 @@ export default function App() {
         {epsgCoords[1] === coords[1] ? <h3 className='app__coordinates'>coordinates to EPSG:{fromEpsg}: <br />{epsgCoords[0]}, {epsgCoords[1]}</h3> : <></>}
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
         {distance ? <h3 className='app__distance'>Final distance: {distance} km</h3> : <></>}
-        {/* {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>} */}
+        {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
         {isRuler ? <h3 className='app__distance'>live distance: {liveDistance} km</h3> : <></>}
       </div>
     </div >
