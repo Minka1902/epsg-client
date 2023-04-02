@@ -15,6 +15,13 @@
     align-items: center;
 }
 
+.app__distance{
+    color: black;
+    margin: 0 auto;
+    font-size: 16px;
+    line-height: 17px;
+}
+
 .app__coordinates {
     width: 80%;
     margin: 2px 10% 5px;
@@ -35,20 +42,11 @@
 
 .app__location-info {
     width: 80%;
-    height: 90px;
+    height: min-content;
     margin: 10px 10%;
     color: rgba(0, 0, 0, 0.4);
     text-align: left;
     line-height: 18px;
-}
-
-.button__here {
-    cursor: pointer;
-    border: 1px solid red;
-    height: 30px;
-    width: 90px;
-    text-align: center;
-    margin: 0 auto 10px auto;
 }
 
 .app__map-pointer {

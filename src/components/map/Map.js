@@ -16,7 +16,7 @@ function SetViewOnClick({ coords, isActive, setViewFalse }) {
   return null;
 }
 
-export default function Map({ coords, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
+export default function Map({ coords, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
 
@@ -47,12 +47,30 @@ export default function Map({ coords, address, isRuler, rulerClick, markerData, 
   //   })
   // }
 
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  }
+
+  const calcDistance = ({ lat1, lon1, lat2, lon2 }) => {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return (distance.toFixed(3));
+  }
+
   function Pointer() {  // eslint-disable-next-line
     const map = useMapEvents({
       mousemove: (evt) => {
         if (evt.originalEvent.currentTarget) {
           const { lat, lng } = evt.target.getCenter();
           setRulerCoords([[lat, lng], [evt.latlng.lat, evt.latlng.lng]]);
+          setLiveDist(calcDistance({ lat1: lat, lon1: lng, lat2: evt.latlng.lat, lon2: evt.latlng.lng }))
         }
       },
       click: (evt) => {
@@ -97,7 +115,7 @@ export default function Map({ coords, address, isRuler, rulerClick, markerData, 
         ))}
 
         {isRuler ?
-          <Polyline pathOptions={{ color: 'black', weight: '3', dashArray: '20, 20', dashOffset: '20' }} positions={rulerCoords} />
+          <Polyline pathOptions={{ color: 'navy', weight: '3', dashArray: '20, 20', dashOffset: '20' }} positions={rulerCoords} />
           :
           <></>}
 

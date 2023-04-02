@@ -21,12 +21,11 @@ export default function App() {
   const [didCopy, setDidCopy] = React.useState(false);
   const [isPointer, setIsPointer] = React.useState(false);
   const [isRuler, setIsRuler] = React.useState(false);
+  const [distance, setDistance] = React.useState(false);
+  const [liveDistance, setLiveDistance] = React.useState(false);
   const epsg = require('epsg');
   const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
   const [epsgForm, setEpsgForm] = React.useState({});
-  // const [shouldRecenterMarker, setShouldRecenterMarker] = React.useState(false);
-  // const [isClickedLocation, setIsClickedLocation] = React.useState(false);
-  // const setShouldRecenterMeTrue = () => setShouldRecenterMe(true);
 
   const togglePointer = () => {
     setIsPointer(!isPointer);
@@ -39,6 +38,10 @@ export default function App() {
     setIsPointer(!isRuler);
     setIsRuler(!isRuler);
   };
+
+  const setLiveDist = (dist) => {
+    setLiveDistance(dist);
+  }
 
   const setIsEpsgFormFilledFalse = () => setIsEpsgFormFilled(false);
 
@@ -180,6 +183,7 @@ export default function App() {
       if (dist) {
         setIsPointer(false);
         setIsRuler(false);
+        setDistance(dist);
       }
     }
   }
@@ -203,6 +207,7 @@ export default function App() {
         copyClicked={copyCoordsClick}
         setViewFalse={setViewFalse}
         setIsEpsgFormFilledFalse={setIsEpsgFormFilledFalse}
+        setLiveDist={setLiveDist}
         markerData={epsgTable}>
         {isPointer ? <img src={Pointer} alt='Map pointer' className='app__map-pointer' /> : <></>}
       </Map>
@@ -226,11 +231,12 @@ export default function App() {
         <Dropdown text='Find coordinates by EPSG'>
           <EpsgForm onCoordinatesSubmit={epsgConvert} />
         </Dropdown>
-
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
         {epsgCoords[1] === coords[1] ? <h3 className='app__coordinates'>coordinates to EPSG:{fromEpsg}: <br />{epsgCoords[0]}, {epsgCoords[1]}</h3> : <></>}
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
+        {distance ? <h3 className='app__distance'>Final distance: {distance} km</h3> : <></>}
         {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
+        {isRuler ? <h3 className='app__distance'>live distance: {liveDistance} km</h3> : <></>}
       </div>
     </div >
   );
