@@ -1,9 +1,9 @@
 import React from 'react';
 import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
+import Table from '../table/Table';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
-import Table from '../table/Table';
 import ButtonBox from '../buttonBox/ButtonBox';
 import Dropdown from '../dropdown/Dropdown';
 import EpsgForm from '../form/EpsgForm'
@@ -13,8 +13,7 @@ export default function App() {
   const [coords, setCoords] = React.useState([31.89291, 35.03254]);
   const [copyCoords, setCopyCoords] = React.useState(null);
   const [address, setAddress] = React.useState('');
-  const [epsgCoords, setEpsgCoords] = React.useState([]);
-  const [fromEpsg, setFromEpsg] = React.useState('');
+  const [epsgCoords, setEpsgCoords] = React.useState({});
   const [epsgTable, setEpsgTable] = React.useState([]);
   const [isClickable, setIsClickable] = React.useState(false);
   const [isView, setIsView] = React.useState(false);
@@ -23,9 +22,9 @@ export default function App() {
   const [isRuler, setIsRuler] = React.useState(false);
   const [distance, setDistance] = React.useState(false);
   const [liveDistance, setLiveDistance] = React.useState(false);
-  const epsg = require('epsg');
   const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
   const [epsgForm, setEpsgForm] = React.useState({});
+  const epsg = require('epsg');
 
   const togglePointer = () => {
     setIsPointer(!isPointer);
@@ -61,6 +60,7 @@ export default function App() {
   // ! Sends coordinates to the findEpsgCodes function
   const clickLocation = ({ latitude, longtitude }) => {
     setIsClickable(false);
+    setEpsgCoords({ longtitude: longtitude.toFixed(4), latitude: latitude.toFixed(4) })
     findEpsgCodes({ coordins: { longtitude: longtitude, latitude: latitude }, form: epsgForm });
     setIsEpsgFormFilled(false);
   }
@@ -74,8 +74,6 @@ export default function App() {
     if (isX) {
       setEpsgForm({ x: x, y: y });
     } else {
-      setEpsgCoords([x, y]);
-      setFromEpsg(fromEpsg);
       if (toProj && fromProj) {
         if (toProj === fromProj) {
           coordinates = proj4(fromProj, [y, x]);
@@ -232,10 +230,9 @@ export default function App() {
           <EpsgForm onCoordinatesSubmit={epsgConvert} />
         </Dropdown>
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
-        {epsgCoords[1] === coords[1] ? <h3 className='app__coordinates'>coordinates to EPSG:{fromEpsg}: <br />{epsgCoords[0]}, {epsgCoords[1]}</h3> : <></>}
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
         {distance ? <h3 className='app__distance'>Final distance: {distance} km</h3> : <></>}
-        {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} /> : <></>}
+        {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
         {isRuler ? <h3 className='app__distance'>live distance: {liveDistance} km</h3> : <></>}
       </div>
     </div >

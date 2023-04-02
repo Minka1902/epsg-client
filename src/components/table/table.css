@@ -9,6 +9,10 @@ table {
   border-spacing: 0;
 }
 
+tfoot {
+  background-color: #f2f2f2;
+}
+
 thead {
   background-color: #3f74d1;
   color: white;

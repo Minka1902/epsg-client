@@ -1,7 +1,7 @@
 // TODO data = {epsg: epsgCode, distance: (coords to point0), point0}
 // ! <Table tableHeaders={['Id', 'Name', 'Email']} data={data} />
 export default function Table(props) {
-    const { tableHeaders, data } = props;
+    const { tableHeaders, data, coordinates } = props;
 
     return (
         <div className="table-container">
@@ -13,7 +13,7 @@ export default function Table(props) {
                         })}
                     </tr>
                 </thead>
-                {/* <tbody>
+                <tbody>
                     {data.map((item, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
@@ -21,7 +21,14 @@ export default function Table(props) {
                             <td>{item.distance ? item.distance : 'Unknown'}</td>
                         </tr>
                     ))}
-                </tbody> */}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Clicked</td>
+                        <td>Latitude: {coordinates.latitude}</td>
+                        <td>Longtitude: {coordinates.longtitude}</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     );
