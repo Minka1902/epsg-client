@@ -13,7 +13,7 @@ export default function Table(props) {
                         })}
                     </tr>
                 </thead>
-                <tbody>
+                {/* <tbody>
                     {data.map((item, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
@@ -21,7 +21,7 @@ export default function Table(props) {
                             <td>{item.distance ? item.distance : 'Unknown'}</td>
                         </tr>
                     ))}
-                </tbody>
+                </tbody> */}
             </table>
         </div>
     );
