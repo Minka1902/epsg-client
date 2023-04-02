@@ -1,13 +1,47 @@
 import React from 'react';
 import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
-import Table from '../table/Table';
+// import Table from '../table/Table';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
 import ButtonBox from '../buttonBox/ButtonBox';
 import Dropdown from '../dropdown/Dropdown';
 import EpsgForm from '../form/EpsgForm'
 import Pointer from '../../images/pointer.svg';
+
+function Table(props) {
+  const { tableHeaders, data, coordinates } = props;
+
+  return (
+    <div className="table-container">
+      <table>
+        <thead>
+          <tr>
+            {tableHeaders.map((header, index) => {
+              return <th key={index}>{header}</th>
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{item.epsg}</td>
+              <td>{item.distance ? item.distance : 'Unknown'}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Clicked</td>
+            <td>Latitude: {coordinates.latitude}</td>
+            <td>Longtitude: {coordinates.longtitude}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+};
 
 export default function App() {
   const [coords, setCoords] = React.useState([31.89291, 35.03254]);

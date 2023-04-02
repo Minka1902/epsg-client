@@ -24,7 +24,7 @@ export default function Table(props) {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td>Clicked</td>
+                        <td>licked</td>
                         <td>Latitude: {coordinates.latitude}</td>
                         <td>Longtitude: {coordinates.longtitude}</td>
                     </tr>
