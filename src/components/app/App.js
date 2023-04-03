@@ -31,13 +31,13 @@ function Table(props) {
             </tr>
           ))}
         </tbody>
-        <tfoot>
+        {coordinates ? <tfoot>
           <tr>
-            <td>Clicked</td>
+            <td>licked</td>
             <td>Latitude: {coordinates.latitude}</td>
             <td>Longtitude: {coordinates.longtitude}</td>
           </tr>
-        </tfoot>
+        </tfoot> : <></>}
       </table>
     </div>
   );
@@ -101,11 +101,11 @@ export default function App() {
 
   // ! Converts location between different EPSG codes
   const epsgConvert = ({ fromEpsg, x, y, isX }) => {
-    setIsEpsgFormFilled(true);
     let fromProj = epsg[`EPSG:${fromEpsg}`];
     let toProj = epsg[`EPSG:4326`];
     let coordinates;
     if (isX) {
+      setIsEpsgFormFilled(true);
       setEpsgForm({ x: x, y: y });
     } else {
       if (toProj && fromProj) {

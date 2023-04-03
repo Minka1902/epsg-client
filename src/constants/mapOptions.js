@@ -1,5 +1,3 @@
-import * as L from 'leaflet';
-
 export const options = {
     mapboxToken: 'pk.eyJ1IjoibWlua2ExOTAyIiwiYSI6ImNsZmIza2MxOTAxdjYzcXBqYmhxdDM4ZmsifQ.6KidVCNmWrz-aq0JP2LYaQ',
     cyclemapToken: '6170aad10dfd42a38d4d8c709a536f38',
@@ -14,13 +12,3 @@ export const maps = [
     { valid: false, checked: false, name: "topo", url: `https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png`, attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>' },
     { valid: false, checked: false, name: "Standard english", url: `https://maptiles.p.rapidapi.com/en/map/v1/{z}/{x}/{y}.png?rapidapi-key={apikey}`, attribution: '&copy; <a href="http://www.maptilesapi.com/">MapTiles API</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' },
 ]
-
-export const greenMarker = new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [0, -35],
-    tooltipAnchor: [16, -28],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    shadowSize: [41, 41],
-});

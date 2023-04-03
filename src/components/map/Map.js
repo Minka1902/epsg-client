@@ -1,10 +1,9 @@
 import 'regenerator-runtime';
 import 'leaflet/dist/leaflet.css';
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
-import * as L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import React from 'react';
-import { maps, greenMarker } from '../../constants/mapOptions';
+import { maps } from '../../constants/mapOptions';
+import { greenMarker, blackMarker, blueMarker } from '../../constants/markers';
 
 function SetViewOnClick({ coords, isActive, setViewFalse }) {
   const map = useMap();
@@ -99,7 +98,7 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
 
         <Marker
           position={coords}
-          icon={new L.Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [0, -35] })}
+          icon={blueMarker}
         >
           <Popup>
             {address ? address : `We dont have any information about this location.`}
@@ -107,11 +106,18 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
         </Marker>
 
         {markerData.map((marker, index) => (
-          <Marker key={index} icon={greenMarker} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
-            <Popup>
-              <p>{marker.epsg}, {marker.distance} km <br />Lat:{marker.wgs84Location.latitude}, Lng:{marker.wgs84Location.longtitude} </p>
-            </Popup>
-          </Marker>
+          index === 0 ?
+            <Marker key={index} icon={greenMarker} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
+              <Popup>
+                <p>{marker.epsg}, {marker.distance} km <br />Lat:{marker.wgs84Location.latitude}, Lng:{marker.wgs84Location.longtitude} </p>
+              </Popup>
+            </Marker>
+            :
+            <Marker key={index} icon={blackMarker} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
+              <Popup>
+                <p>{marker.epsg}, {marker.distance} km <br />Lat:{marker.wgs84Location.latitude}, Lng:{marker.wgs84Location.longtitude} </p>
+              </Popup>
+            </Marker>
         ))}
 
         {isRuler ?

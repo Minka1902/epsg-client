@@ -33,6 +33,10 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
+tbody tr:nth-child(1){
+  color: rgb(14, 199, 14);
+}
+
 tr:hover {
   background-color: #f2f2f2;
   color: black;
