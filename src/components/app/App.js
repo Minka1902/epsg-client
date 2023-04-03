@@ -5,7 +5,7 @@ import osmApiOBJ from '../../utils/osmApi';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
 import ButtonBox from '../buttonBox/ButtonBox';
-import Dropdown from '../dropdown/Dropdown';
+import DropdownControl from '../dropdownControl/DropdownControll';
 import EpsgForm from '../form/EpsgForm'
 import Pointer from '../../images/pointer.svg';
 
@@ -257,12 +257,10 @@ export default function App() {
           onChooseEpsgLocation={setIsClickableTrue}
         />
         {copyCoords ? <h2 className='app__coordinates'>Lat: {copyCoords.lat.toFixed(5)}, Lng: {copyCoords.lng.toFixed(5)}</h2> : <></>}
-        <Dropdown text='Lat/Lng'>
+        <DropdownControl>
           <LatLonForm onCoordinatesSubmit={onCoordinateSubmit} />
-        </Dropdown>
-        <Dropdown text='Find coordinates by EPSG'>
           <EpsgForm onCoordinatesSubmit={epsgConvert} />
-        </Dropdown>
+        </DropdownControl>
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
         {distance ? <h3 className='app__distance'>Final distance: {distance} km</h3> : <></>}

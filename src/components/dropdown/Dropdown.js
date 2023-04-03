@@ -1,12 +1,7 @@
 import React from 'react';
 
-export default function Dropdown({ children, text }) {
-    const [isOpen, setIsOpen] = React.useState(false);
+export default function Dropdown({ children, text, isOpen, toggleDropdown }) {
     const dropdownRef = React.useRef(null);
-
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
 
     React.useEffect(() => {
         if (isOpen) {
