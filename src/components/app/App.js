@@ -5,7 +5,7 @@ import osmApiOBJ from '../../utils/osmApi';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
 import ButtonBox from '../buttonBox/ButtonBox';
-import DropdownControl from '../dropdownControl/DropdownControll';
+import DropdownControl from '../dropdownControl/DropdownControl';
 import EpsgForm from '../form/EpsgForm'
 import Pointer from '../../images/pointer.svg';
 
