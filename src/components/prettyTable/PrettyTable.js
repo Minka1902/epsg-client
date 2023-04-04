@@ -1,6 +1,6 @@
 // TODO data = {epsg: epsgCode, distance: (coords to point0), point0}
 // ! <Table tableHeaders={['Id', 'Name', 'Email']} data={data} />
-export default function Table(props) {
+export default function PrettyTable(props) {
     const { tableHeaders, data, coordinates } = props;
 
     return (

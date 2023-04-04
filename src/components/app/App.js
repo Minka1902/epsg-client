@@ -1,7 +1,7 @@
 import React from 'react';
 import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
-// import Table from '../table/Table';
+import PrettyTable from '../prettyTable/PrettyTable';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
 import ButtonBox from '../buttonBox/ButtonBox';
@@ -9,39 +9,39 @@ import DropdownControl from '../dropdownControl/DropdownControl';
 import EpsgForm from '../form/EpsgForm'
 import Pointer from '../../images/pointer.svg';
 
-function Table(props) {
-  const { tableHeaders, data, coordinates } = props;
+// function Table(props) {
+//   const { tableHeaders, data, coordinates } = props;
 
-  return (
-    <div className="table-container">
-      <table>
-        <thead>
-          <tr>
-            {tableHeaders.map((header, index) => {
-              return <th key={index}>{header}</th>
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{item.epsg}</td>
-              <td>{item.distance ? item.distance : 'Unknown'}</td>
-            </tr>
-          ))}
-        </tbody>
-        {coordinates ? <tfoot>
-          <tr>
-            <td>licked</td>
-            <td>Latitude: {coordinates.latitude}</td>
-            <td>Longtitude: {coordinates.longtitude}</td>
-          </tr>
-        </tfoot> : <></>}
-      </table>
-    </div>
-  );
-};
+//   return (
+//     <div className="table-container">
+//       <table>
+//         <thead>
+//           <tr>
+//             {tableHeaders.map((header, index) => {
+//               return <th key={index}>{header}</th>
+//             })}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {data.map((item, index) => (
+//             <tr key={index}>
+//               <td>{index + 1}</td>
+//               <td>{item.epsg}</td>
+//               <td>{item.distance ? item.distance : 'Unknown'}</td>
+//             </tr>
+//           ))}
+//         </tbody>
+//         {coordinates ? <tfoot>
+//           <tr>
+//             <td>licked</td>
+//             <td>Latitude: {coordinates.latitude}</td>
+//             <td>Longtitude: {coordinates.longtitude}</td>
+//           </tr>
+//         </tfoot> : <></>}
+//       </table>
+//     </div>
+//   );
+// };
 
 export default function App() {
   const [coords, setCoords] = React.useState([31.89291, 35.03254]);
@@ -50,7 +50,7 @@ export default function App() {
   const [epsgCoords, setEpsgCoords] = React.useState({});
   const [epsgTable, setEpsgTable] = React.useState([]);
   const [isClickable, setIsClickable] = React.useState(false);
-  const [isView, setIsView] = React.useState(false);
+  const [isView, setIsView] = React.useState(true);
   const [didCopy, setDidCopy] = React.useState(false);
   const [isPointer, setIsPointer] = React.useState(false);
   const [isRuler, setIsRuler] = React.useState(false);
@@ -264,7 +264,7 @@ export default function App() {
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
         {distance ? <h3 className='app__distance'>Final distance: {distance} km</h3> : <></>}
-        {epsgTable[4] ? <Table data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
+        {epsgTable[4] ? <PrettyTable data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
         {isRuler ? <h3 className='app__distance'>live distance: {liveDistance} km</h3> : <></>}
       </div>
     </div >

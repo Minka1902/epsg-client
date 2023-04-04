@@ -8,7 +8,7 @@
 @import url('./components/form/form.css');
 
 /* ! table */
-@import url('./components/table/table.css');
+@import url('./components/prettyTable/prettyTable.css');
 
 /* ! button box */
 @import url('./components/buttonBox/buttonBox.css');
