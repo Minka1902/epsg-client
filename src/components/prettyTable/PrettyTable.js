@@ -24,7 +24,7 @@ export default function PrettyTable(props) {
                 </tbody>
                 {coordinates ? <tfoot>
                     <tr>
-                        <td>licked</td>
+                        <td>Clicked</td>
                         <td>Latitude: {coordinates.latitude}</td>
                         <td>Longtitude: {coordinates.longtitude}</td>
                     </tr>
