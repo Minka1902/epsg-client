@@ -4,7 +4,6 @@ import xyz from '../../images/xyz.svg';
 import markerIcon from '../../images/marker.svg';
 import Pointer from '../../images/pointer.svg'
 import ruler from '../../images/ruler.svg'; // eslint-disable-next-line
-import LocationMe from "../../images/location-me.svg";
 
 
 export default function ButtonBox(props) {  // eslint-disable-next-line
@@ -28,7 +27,6 @@ export default function ButtonBox(props) {  // eslint-disable-next-line
             <img className='button-box__button' name='recenter-marker' title='Recenter on marker' src={markerIcon} onClick={recenterOnMarker} alt='Recenter on marker' />
             <img className={`button-box__button${isPointer ? '_clicked' : ''}`} name='toggle-pointer' title='Show/Hide pointer' src={Pointer} onClick={togglePointer} alt='Show/Hide pointer' />
             <img className={`button-box__button${isRuler ? '_clicked' : ''}`} name='toggle-pointer' title='Calculate distance' src={ruler} onClick={toggleRuler} alt='Calculate distance' />
-            {/* <img className='button-box__button' name='recenter-me' title="Recenter on me" src={LocationMe} onClick={onRecenterMe} alt='Recenter on me' /> */}
         </div>
     );
 }

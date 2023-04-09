@@ -66,6 +66,36 @@ export const removeDuplicates = (nums) => {
     return nums;
 };
 
+// ! 	gets a string and returns it with the first word capitalized
+// TODO capitalizeFirstWord('hello world.')
+// ?  	Hello world.
+export const capitalizeFirstWord = (str) => {
+    return str.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
+}
+
+// ! 	gets 2 locations and calculates distance between them (lat, lng)
+// TODO calcDistance({ lat1: 31.89286, lon1: 35.03255, lat2: 31.88159, lon2: 34.99352 })
+// ?  	3.892
+export const calcDistance = ({ lat1, lon1, lat2, lon2 }) => {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return (distance.toFixed(3));
+}
+
+// ! 	gets a numeric degree and converts it to radians
+// TODO deg2rad(31.88159 - 31.89286)
+// ?  	-0.00019669860669975517
+const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+}
+
 export const mincostTickets = (days, costs) => {
     const [_1day, _7day, _30day] = [0, 1, 2];
     let travelDays = new Set(days);

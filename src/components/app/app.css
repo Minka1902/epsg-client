@@ -15,7 +15,7 @@
     align-items: center;
 }
 
-.app__distance{
+.app__distance {
     color: black;
     margin: 0 auto;
     font-size: 16px;
@@ -40,7 +40,7 @@ h3.app__coordinates {
     text-align: center;
 }
 
-.app__coordinates_modified{
+.app__coordinates_modified {
     width: 80%;
     margin: 10px 10% 0px;
     color: rgba(0, 0, 0, 0.4);

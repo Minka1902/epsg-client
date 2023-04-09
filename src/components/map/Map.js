@@ -4,20 +4,12 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersCon
 import React from 'react';
 import { maps } from '../../constants/mapOptions';
 import { greenMarker, blackMarker, blueMarker } from '../../constants/markers';
-
-function SetViewOnClick({ coords, isActive, setViewFalse }) {
-  const map = useMap();
-  if (isActive) {
-    map.flyTo(coords, 18);
-    setViewFalse();
-  }
-
-  return null;
-}
+import { calcDistance } from '../../constants/functions';
 
 export default function Map({ coords, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
+  const [isFirst, setIsFirst] = React.useState(true);
 
   function ClickLocation() { // eslint-disable-next-line
     const map = useMapEvents({
@@ -35,32 +27,16 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
     return null;
   }
 
-  // function Locate() {
-  //   const map = useMapEvents({
-  //     click() {
-  //       map.locate()
-  //     },
-  //     locationfound(e) {
-  //       map.flyTo(e.latlng, map.getZoom())
-  //     },
-  //   })
-  // }
+  function SetViewOnClick({ coords, isActive, setViewFalse }) {
+    const map = useMap();
+    if (isActive && !isFirst) {
+      map.flyTo(coords, 18);
+      setViewFalse();
+    } else {
+      setIsFirst(false);
+    }
 
-  const deg2rad = (deg) => {
-    return deg * (Math.PI / 180);
-  }
-
-  const calcDistance = ({ lat1, lon1, lat2, lon2 }) => {
-    const R = 6371;
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return (distance.toFixed(3));
+    return null;
   }
 
   function Pointer() {  // eslint-disable-next-line
@@ -93,7 +69,7 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
       >
         <Pointer />
         {children}
-        <SetViewOnClick coords={coords} isActive={isView} setViewFalse={setViewFalse} />
+        <SetViewOnClick coords={coords} isActive={isView} setViewFalse={setViewFalse} isFirst={isFirst} />
         {isClickable || didCopy ? <ClickLocation /> : <></>}
 
         <Marker
