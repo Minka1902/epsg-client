@@ -171,10 +171,6 @@ export default function App() {
   // ! Sets the map for the first time
   React.useEffect(() => {
     onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
-    const asd = calcDistance({ lat1: 31.89286, lon1: 35.03255, lat2: 31.88159, lon2: 34.99352 });
-    if (asd) {
-
-    }
   }, []);
 
   return (
