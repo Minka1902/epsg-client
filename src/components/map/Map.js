@@ -1,6 +1,6 @@
 import 'regenerator-runtime';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
+import { MapContainer, Tooltip, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import React from 'react';
 import { maps } from '../../constants/mapOptions';
 import { greenMarker, blackMarker, blueMarker } from '../../constants/markers';
@@ -9,7 +9,6 @@ import { calcDistance } from '../../constants/functions';
 export default function Map({ coords, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
-  const [isFirst, setIsFirst] = React.useState(true);
 
   function ClickLocation() { // eslint-disable-next-line
     const map = useMapEvents({
@@ -29,11 +28,9 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
 
   function SetViewOnClick({ coords, isActive, setViewFalse }) {
     const map = useMap();
-    if (isActive && !isFirst) {
+    if (isActive) {
       map.flyTo(coords, 18);
       setViewFalse();
-    } else {
-      setIsFirst(false);
     }
 
     return null;
@@ -53,9 +50,8 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
           rulerClick(evt);
         }
       },
-    })
+    });
   }
-
   return (
     <div id='map'>
       <MapContainer
@@ -69,9 +65,10 @@ export default function Map({ coords, setLiveDist, address, isRuler, rulerClick,
       >
         <Pointer />
         {children}
-        <SetViewOnClick coords={coords} isActive={isView} setViewFalse={setViewFalse} isFirst={isFirst} />
+        <SetViewOnClick coords={coords} isActive={isView} setViewFalse={setViewFalse} />
         {isClickable || didCopy ? <ClickLocation /> : <></>}
 
+        <Tooltip sticky />
         <Marker
           position={coords}
           icon={blueMarker}
