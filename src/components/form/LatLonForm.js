@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function LatLonForm(props) {
-    const { onCoordinatesSubmit } = props;
+    const { onSubmit } = props;
     const [longtitude, setLongtitude] = React.useState('');
     const [latitude, setLatitude] = React.useState('');
     const [isLongtitudeCorrect, setIsLongtitudeCorrect] = React.useState(true);
@@ -10,7 +10,7 @@ export default function LatLonForm(props) {
 
     const onFormSubmit = (evt) => {
         evt.preventDefault();
-        onCoordinatesSubmit({ y: parseFloat(longtitude), x: parseFloat(latitude), is4326: true });
+        onSubmit({ y: parseFloat(longtitude), x: parseFloat(latitude), is4326: true });
     };
 
     const checkCoordinate = (coordinate) => {

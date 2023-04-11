@@ -49,3 +49,25 @@ export const blueMarker = new L.Icon({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     shadowSize: [41, 41],
 });
+
+export const customMarker = new L.Icon({
+    iconUrl: 'https://www.svgrepo.com/show/394267/map-marker.svg',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [35, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [11, 41],
+    iconAnchor: [15, 40],
+    popupAnchor: [0, -35],
+    tooltipAnchor: [16, -28],
+});
+
+export const customMarker2 = new L.Icon({
+    iconUrl: 'https://www.svgrepo.com/show/153720/pointer-on-the-map.svg',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [35, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [11, 41],
+    iconAnchor: [15, 40],
+    popupAnchor: [0, -35],
+    tooltipAnchor: [16, -28],
+});

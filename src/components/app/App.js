@@ -25,6 +25,8 @@ export default function App() {
   const [liveDistance, setLiveDistance] = React.useState(false);
   const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
   const [epsgForm, setEpsgForm] = React.useState({});
+  const [list, setList] = React.useState([203323, 644541]);
+  const [markersCoordinates, setMarkersCoordinates] = React.useState([]);
   const epsg = require('epsg');
 
   const togglePointer = () => {
@@ -41,7 +43,7 @@ export default function App() {
 
   const setLiveDist = (dist) => {
     setLiveDistance(dist);
-  }
+  };
 
   const setIsEpsgFormFilledFalse = () => setIsEpsgFormFilled(false);
 
@@ -56,7 +58,7 @@ export default function App() {
   const copyCoordsClick = (coords) => {
     setCopyCoords(coords);
     setDidCopy(false);
-  }
+  };
 
   // ! Sends coordinates to the findEpsgCodes function
   const clickLocation = ({ latitude, longtitude }) => {
@@ -64,7 +66,7 @@ export default function App() {
     setEpsgCoords({ longtitude: longtitude.toFixed(4), latitude: latitude.toFixed(4) })
     findEpsgCodes({ coordins: { longtitude: longtitude, latitude: latitude }, form: epsgForm });
     setIsEpsgFormFilled(false);
-  }
+  };
 
   // ! Converts location between different EPSG codes
   const epsgConvert = ({ fromEpsg, x, y, isX }) => {
@@ -87,7 +89,7 @@ export default function App() {
         console.log("Error! EPSG CODE NON-EXISTING!")
       }
     }
-  }
+  };
 
   // ! Get the info about the location found
   const onCoordinateSubmit = ({ x, y, is4326 = false }) => {
@@ -104,10 +106,38 @@ export default function App() {
           console.log(`Coordinate search error: ${err}`);
         }
       });
-  }
+  };
+
+  // ! 
+  const epsgMarkerChange = ({ fromEpsg }) => {
+    let fromProj = epsg[`EPSG:${fromEpsg}`];
+    let toProj4326 = epsg[`EPSG:4326`];
+    let coordinates;
+    let coordList = [];
+    let newMarker = {};
+    if (fromEpsg && list) {
+      for (let i = 0; i < list.length; i += 2) {
+        let y = list[i], x = list[i + 1];
+        if (fromProj) {
+          newMarker.isTable = false;
+          if (toProj4326 === fromProj) {
+            coordinates = proj4(fromProj, [y, x]);
+            newMarker.wgs84Location = { latitude: coordinates[1].toFixed(4), longtitude: coordinates[0].toFixed(4) };
+          } else {
+            coordinates = proj4(fromProj, toProj4326, [y, x]);
+            newMarker.wgs84Location = { latitude: coordinates[1].toFixed(4), longtitude: coordinates[0].toFixed(4) };
+
+          }
+          coordList[coordList.length] = Object.assign({}, newMarker);
+        }
+      }
+      setMarkersCoordinates(coordList);
+    }
+  };
 
   // ! Creates a list of EPSG codes and renders the closest onces
   const findEpsgCodes = ({ coordins, form }) => {
+    const toProj4326 = epsg[`EPSG:4326`];
     let coordinates;
     let arr = [];
     const { x, y } = form;
@@ -115,7 +145,6 @@ export default function App() {
     for (let i = 0; i < 33000; i++) {
       newEpsgObj.epsg = `EPSG:${2000 + i}`;
       const fromProj = epsg[`EPSG:${2000 + i}`];
-      const toProj4326 = epsg[`EPSG:4326`];
       if (fromProj) {
         if (toProj4326 === fromProj) {
           coordinates = proj4(fromProj, [coordins.latitude, coordins.longtitude]);
@@ -136,12 +165,13 @@ export default function App() {
     }
     arr.sort((a, b) => a.distance - b.distance);
     setEpsgTable([arr[0], arr[1], arr[2], arr[3], arr[4]]);
-  }
+  };
 
   // ! Checks if the element should be added to the array
   const addElementToArray = (arr, elem) => {
     let shouldEnter = true;
     if (elem.wgs84Location && elem.distance < 14000) {
+      elem.isTable = true;
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].distance === elem.distance) {
           shouldEnter = false;
@@ -152,7 +182,7 @@ export default function App() {
         arr[arr.length] = Object.assign({}, elem);
       }
     }
-  }
+  };
 
   // ! Calculates the air distance between the pointer and the cursor
   const rulerClick = (evt) => {
@@ -166,7 +196,7 @@ export default function App() {
         setDistance(dist);
       }
     }
-  }
+  };
 
   // ! Sets the map for the first time
   React.useEffect(() => {
@@ -182,6 +212,7 @@ export default function App() {
         isRuler={isRuler}
         isView={isView}
         isPointer={isPointer}
+        markersCoordinates={markersCoordinates}
         rulerClick={rulerClick}
         findEpsgClick={clickLocation}
         copyClicked={copyCoordsClick}
@@ -206,8 +237,8 @@ export default function App() {
         />
         {copyCoords ? <h2 className='app__coordinates'>Lat: {copyCoords.lat.toFixed(5)}, Lng: {copyCoords.lng.toFixed(5)}</h2> : <></>}
         <DropdownControl>
-          <LatLonForm onCoordinatesSubmit={onCoordinateSubmit} />
-          <EpsgForm onCoordinatesSubmit={epsgConvert} />
+          <LatLonForm onSubmit={onCoordinateSubmit} />
+          <EpsgForm epsgSubmit={epsgMarkerChange} onSubmit={epsgConvert} />
         </DropdownControl>
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
         <h4 className='app__location-info'>Location info: <br />{address}</h4>
