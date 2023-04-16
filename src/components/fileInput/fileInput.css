@@ -1,0 +1,52 @@
+.file-input {
+    position: relative;
+    top: -68px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 211px;
+    height: 64px;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0 auto -68px auto;
+    z-index: 1;
+}
+
+.file-label {
+    display: inline-flex;
+    width: 179px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 1rem;
+    background-color: #f2f2f2;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    color: #666;
+    transition: all 0.3s ease;
+    z-index: 0;
+    margin: 5px auto;
+}
+
+.file-label:hover {
+    background-color: #ddd;
+    border-color: #999;
+    color: #333;
+}
+
+.file-icon {
+    background-image: url('../../images/json-file.svg');
+    background-size: 30px;
+    width: 30px;
+    height: 30px;
+}
+
+.file-text {
+    margin-left: 1rem;
+}
+
+.file-text__name {
+    margin-left: 1rem;
+    font-size: 13px;
+}

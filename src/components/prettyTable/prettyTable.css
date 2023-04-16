@@ -3,6 +3,29 @@
   width: 80%;
 }
 
+.table-container_invissible {
+  visibility: hidden;
+}
+
+.table__toggle-button {
+  position: relative;
+  background-image: url('../../images/v-arrow.svg');
+  background-size: 30px;
+  top: 0;
+  left: 35%;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+}
+
+.table__toggle-button:hover{
+  opacity: 0.3;
+}
+
+._toggled{
+  transform: rotate(180deg);
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -33,7 +56,7 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
-tbody tr:nth-child(1){
+tbody tr:nth-child(1) {
   color: rgb(14, 199, 14);
 }
 

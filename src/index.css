@@ -17,7 +17,13 @@
 @import url('./components/preloader/preloader.css');
 
 /* ! dropdown */
-@import url('./components/dropdown/dropdown.css');
+@import url('./components/dropdownControl/dropdown.css');
+
+/* ! file input */
+@import url('./components/fileInput/fileInput.css');
+
+/* ! radio menu */
+@import url('./components/radioMenu/radioMenu.css');
 
 body {
   margin: 0;

@@ -2,7 +2,7 @@ import React from "react";
 
 export default function LatLonForm(props) {
     const epsg = require('epsg');
-    const { onSubmit, epsgSubmit } = props;
+    const { onSubmit, markersChange } = props;
     const [longtitudeInput, setLongtitudeInput] = React.useState('');
     const [latitudeInput, setLatitudeInput] = React.useState('');
     const [epsgInput, setEpsgInput] = React.useState('');
@@ -17,7 +17,7 @@ export default function LatLonForm(props) {
             onSubmit({ isX: true, x: parseFloat(longtitudeInput), y: parseFloat(latitudeInput) });
         } else {
             if (epsgInput !== '' && longtitudeInput === '' && latitudeInput === '') {
-                epsgSubmit({ fromEpsg: epsgInput });
+                markersChange({ fromEpsg: epsgInput });
             } else {
                 if (epsgInput === 'X' || epsgInput === 'x') {
                     onSubmit({ x: parseFloat(longtitudeInput), y: parseFloat(latitudeInput), isX: true });
@@ -111,7 +111,7 @@ export default function LatLonForm(props) {
             <h3 className='input-title'>Y coordinate:</h3>
             <input
                 className="form__input"
-                placeholder="Enter Y coordinate"
+                placeholder="Enter Y coordinates / import file"
                 id="longtitude-input"
                 type="text"
                 name="longtitudeInput"
@@ -125,7 +125,7 @@ export default function LatLonForm(props) {
             <h3 className='input-title'>X coordinate:</h3>
             <input
                 className="form__input"
-                placeholder="Enter X coordinate"
+                placeholder="Enter X coordinates / import file"
                 id="latitude-input"
                 type="text"
                 name="latitudeInput"

@@ -3,3 +3,18 @@
   width: 100%;
   margin: 0;
 }
+
+.button__export {
+  background-image: url('../../images/download-map.svg');
+  background-size: 30px;
+  position: fixed;
+  top: 10px;
+  left: 50px;
+  z-index: 400;
+  border: 1px solid grey;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 30px;
+  height: 30px;
+}

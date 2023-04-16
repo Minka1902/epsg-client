@@ -1,5 +1,5 @@
 import React from 'react';
-import Dropdown from '../dropdown/Dropdown';
+import Dropdown from './Dropdown';
 
 export default function DropdownControl({ children }) {
     const [isForm1Open, setIsForm1Open] = React.useState(false);

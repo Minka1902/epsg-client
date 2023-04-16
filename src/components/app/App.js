@@ -9,6 +9,8 @@ import DropdownControl from '../dropdownControl/DropdownControl';
 import EpsgForm from '../form/EpsgForm'
 import Pointer from '../../images/pointer.svg';
 import { calcDistance } from '../../constants/functions';
+import FileInput from '../fileInput/FileInput';
+import RadioMenu from '../radioMenu/RadioMenu';
 
 export default function App() {
   const [coords, setCoords] = React.useState([31.89291, 35.03254]);
@@ -24,8 +26,8 @@ export default function App() {
   const [distance, setDistance] = React.useState(false);
   const [liveDistance, setLiveDistance] = React.useState(false);
   const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
-  const [epsgForm, setEpsgForm] = React.useState({});
-  const [list, setList] = React.useState([203323, 644541]);
+  const [epsgForm, setEpsgForm] = React.useState({});   // eslint-disable-next-line
+  const [list, setList] = React.useState([]);
   const [markersCoordinates, setMarkersCoordinates] = React.useState([]);
   const epsg = require('epsg');
 
@@ -44,6 +46,8 @@ export default function App() {
   const setLiveDist = (dist) => {
     setLiveDistance(dist);
   };
+
+  const setFileData = (data) => setList(data);
 
   const setIsEpsgFormFilledFalse = () => setIsEpsgFormFilled(false);
 
@@ -115,9 +119,10 @@ export default function App() {
     let coordinates;
     let coordList = [];
     let newMarker = {};
-    if (fromEpsg && list) {
+    if (fromProj && list) {
       for (let i = 0; i < list.length; i += 2) {
         let y = list[i], x = list[i + 1];
+        newMarker.originalCoordinates = { x: x, y: y };
         if (fromProj) {
           newMarker.isTable = false;
           if (toProj4326 === fromProj) {
@@ -201,6 +206,7 @@ export default function App() {
   // ! Sets the map for the first time
   React.useEffect(() => {
     onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
+    // lengthOfLastWord('moon ');
   }, []);
 
   return (
@@ -238,7 +244,10 @@ export default function App() {
         {copyCoords ? <h2 className='app__coordinates'>Lat: {copyCoords.lat.toFixed(5)}, Lng: {copyCoords.lng.toFixed(5)}</h2> : <></>}
         <DropdownControl>
           <LatLonForm onSubmit={onCoordinateSubmit} />
-          <EpsgForm epsgSubmit={epsgMarkerChange} onSubmit={epsgConvert} />
+          <RadioMenu>
+            <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />
+            <FileInput onFileChoose={setFileData} />
+          </RadioMenu>
         </DropdownControl>
         <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
         <h4 className='app__location-info'>Location info: <br />{address}</h4>

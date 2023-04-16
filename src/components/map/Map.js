@@ -1,13 +1,17 @@
 import 'regenerator-runtime';
 import 'leaflet/dist/leaflet.css';
+import leafletImage from 'leaflet-image';
 import { MapContainer, Tooltip, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import React from 'react';
 import { maps } from '../../constants/mapOptions';
-import { greenMarker, blackMarker, blueMarker, redMarker, customMarker2 } from '../../constants/markers';
+import * as L from 'leaflet';
+import { greenMarker, blackMarker, blueMarker, customMarker2 } from '../../constants/markers';
 import { calcDistance } from '../../constants/functions';
 
 export default function Map({ coords, markersCoordinates, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
+  const mapRef = React.useRef();
+  const [linkasd, setlij] = React.useState('hi');
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
   const [markerArray, setMarkerArray] = React.useState([]);
 
@@ -54,19 +58,40 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
     });
   }
 
+  const handleExportImage = () => {
+    if (mapRef.current) {
+      const map = mapRef.current;
+      leafletImage(map, (err, canvas) => {
+        if (err) {
+          console.error('Error exporting map as image:', err);
+        } else {
+          const link = {};
+          link.href = canvas.toDataURL('image/jpeg');
+          link.download = 'map.png'; // ! downloads the image.png as map.png
+          // link.click();
+          console.log(link.href);
+        }
+      });
+    }
+  };
+
   React.useEffect(() => {
     let tempArray = [];
     for (let i = 0; i < markerData.length; i++) {
-      if (markerData[i].wgs84Location.latitude !== NaN && markerData[i].wgs84Location.latitude !== Infinity && markerData[i].wgs84Location.latitude) {
-        if (markerData[i].wgs84Location.longtitude !== NaN && markerData[i].wgs84Location.longtitude !== Infinity && markerData[i].wgs84Location.longtitude) {
-          tempArray[tempArray.length] = Object.assign({}, markerData[i]);
+      if (!isNaN(markerData[i].wgs84Location.longtitude) && !isNaN(markerData[i].wgs84Location.latitude)) {
+        if (markerData[i].wgs84Location.longtitude !== Infinity && markerData[i].wgs84Location.latitude !== Infinity) {
+          if (markerData[i].wgs84Location.longtitude && markerData[i].wgs84Location.latitude) {
+            tempArray[tempArray.length] = Object.assign({}, markerData[i]);
+          }
         }
       }
     }
     for (let i = 0; i < markersCoordinates.length; i++) {
-      if (markersCoordinates[i].wgs84Location.latitude !== 'NaN' && markersCoordinates[i].wgs84Location.latitude !== Infinity) {
-        if (markersCoordinates[i].wgs84Location.longtitude !== NaN && markersCoordinates[i].wgs84Location.longtitude !== Infinity) {
-          tempArray[tempArray.length] = Object.assign({}, markersCoordinates[i]);
+      if (!isNaN(markersCoordinates[i].wgs84Location.latitude) && !isNaN(markersCoordinates[i].wgs84Location.longtitude)) {
+        if (markersCoordinates[i].wgs84Location.longtitude !== Infinity && markersCoordinates[i].wgs84Location.latitude !== Infinity) {
+          if (markersCoordinates[i].wgs84Location.longtitude && markersCoordinates[i].wgs84Location.latitude) {
+            tempArray[tempArray.length] = Object.assign({}, markersCoordinates[i]);
+          }
         }
       }
     }
@@ -83,6 +108,7 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
         scrollWheelZoom={true}
         doubleClickZoom={true}
         dragging={true}
+        ref={mapRef}
       >
         <Pointer />
         {children}
@@ -111,7 +137,7 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
             :
             <Marker key={index} icon={customMarker2} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
               <Popup>
-                <p>Lat: {marker.wgs84Location.latitude}, Lng: {marker.wgs84Location.longtitude}</p>
+                <p>Lat: {marker.originalCoordinates.y}, Lng: {marker.originalCoordinates.x}</p>
               </Popup>
             </Marker>
         ))}
@@ -131,6 +157,7 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
           })}
         </LayersControl>
       </MapContainer>
-    </div>
+      <div className='button__export' onClick={handleExportImage} title='Download map as jpeg' ></div>
+    </div >
   );
 }
