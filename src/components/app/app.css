@@ -20,6 +20,11 @@
     margin: 0 auto;
     font-size: 16px;
     line-height: 17px;
+    text-align: center;
+}
+
+.app__distance_hidden{
+    display: none;
 }
 
 .app__coordinates {
@@ -67,21 +72,21 @@ h3.app__coordinates {
     height: 30px;
 }
 
-.app__button {
-    width: 75%;
-    height: 30px;
-    border-radius: 100px;
-    border: none;
-    padding: 0;
-    font-family: 'Inter', Arial, sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 15px;
-    text-align: center;
-    margin: 0 0 10px 0;
-    color: #FFFFFF;
-    background: #2F71E5;
-    box-shadow: 0px 5px 15px rgba(14, 26, 57, 0.2);
-    cursor: pointer;
+@media screen and (max-width: 599px) {
+    .app__coordinates {
+        width: 100%;
+        margin: 0;
+        font-size: 12px;
+        line-height: 13px;
+    }
+
+    .app__conteiner{
+        width: 25%;
+    }
+
+    .app__distance {
+        margin-top: 3px;
+        font-size: 13px;
+        line-height: 14px;
+    }
 }

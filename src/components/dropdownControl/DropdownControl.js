@@ -25,7 +25,7 @@ export default function DropdownControl({ children }) {
             <Dropdown toggleDropdown={toggleDropdown1} text='Lat/Lng' isOpen={isForm1Open}>
                 {children[0]}
             </Dropdown>
-            <Dropdown toggleDropdown={toggleDropdown2} text='Find coordinates by EPSG' isOpen={isForm2Open}>
+            <Dropdown toggleDropdown={toggleDropdown2} text='EPSG' isOpen={isForm2Open}>
                 {children[1]}
             </Dropdown>
         </>

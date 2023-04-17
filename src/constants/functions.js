@@ -96,6 +96,18 @@ const deg2rad = (deg) => {
     return deg * (Math.PI / 180);
 }
 
+// ! 	gets a string and returns it as 5 words and ... at the end
+// TODO shortenString("This is a long string with more than five words in it.")
+// ?  	This is a long string with ...
+export const shortenString = (str) => {
+    let words = str.trim().split(/\s+/);
+    let shortStr = words.slice(0, 5).join(" ");
+    if (words.length > 5) {
+        shortStr += " ...";
+    }
+    return shortStr;
+}
+
 export const mincostTickets = (days, costs) => {
     const [_1day, _7day, _30day] = [0, 1, 2];
     let travelDays = new Set(days);

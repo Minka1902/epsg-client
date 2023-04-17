@@ -60,7 +60,7 @@ export default function LatLonForm(props) {
                 value={longtitude}
                 onChange={(evt) => setLongtitude(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isLongtitudeCorrect ? '' : '_visible'}`}>Longtitude incorrect</p>
+            <p className={`error-massage${isLongtitudeCorrect ? '' : '_visible'}`}>{window.innerHeight <= 599 ? 'Incorrect' : 'Longtitude incorrect'}</p>
 
             <h3 className='input-title'>Latitude:</h3>
             <input
@@ -75,7 +75,7 @@ export default function LatLonForm(props) {
                 value={latitude}
                 onChange={(evt) => setLatitude(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isLatitudeCorrect ? '' : '_visible'}`}>Latitude incorrect</p>
+            <p className={`error-massage${isLatitudeCorrect ? '' : '_visible'}`}>{window.innerHeight <= 599 ? 'Incorrect' : 'Latitude incorrect'}</p>
             <button type="submit" name="search-coord" className={`form__button${isValid ? '' : '_invalid'}`}>
                 Find Coordinates
             </button>

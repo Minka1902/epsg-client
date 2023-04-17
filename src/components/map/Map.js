@@ -4,14 +4,12 @@ import leafletImage from 'leaflet-image';
 import { MapContainer, Tooltip, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import React from 'react';
 import { maps } from '../../constants/mapOptions';
-import * as L from 'leaflet';
 import { greenMarker, blackMarker, blueMarker, customMarker2 } from '../../constants/markers';
-import { calcDistance } from '../../constants/functions';
+import { calcDistance, shortenString } from '../../constants/functions';
 
-export default function Map({ coords, markersCoordinates, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
+export default function Map({ coords, markersCoordinates, bbox, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
   const mapRef = React.useRef();
-  const [linkasd, setlij] = React.useState('hi');
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
   const [markerArray, setMarkerArray] = React.useState([]);
 
@@ -65,16 +63,19 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
         if (err) {
           console.error('Error exporting map as image:', err);
         } else {
+          // const link = document.createElement('a');
           const link = {};
           link.href = canvas.toDataURL('image/jpeg');
-          link.download = 'map.png'; // ! downloads the image.png as map.png
+          link.download = 'map.jpeg'; // ! downloads the image.png as map.png
           // link.click();
           console.log(link.href);
+          console.log(window.location.href);
         }
       });
     }
   };
 
+  // ? creates one big array of markers
   React.useEffect(() => {
     let tempArray = [];
     for (let i = 0; i < markerData.length; i++) {
@@ -96,7 +97,23 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
       }
     }
     setMarkerArray(tempArray);
-  }, [markersCoordinates, markerData])
+  }, [markersCoordinates, markerData]);
+
+
+  // ? once the bounding box is set it will open it
+  React.useEffect(() => {
+    const map = mapRef.current;
+
+    if (bbox[3]) {
+      const bounds = [
+        [bbox[0], bbox[2]],
+        [bbox[1], bbox[3]],
+      ];
+      map.whenReady(() => {
+        map.fitBounds(bounds);
+      });
+    }
+  }, [bbox]);
 
   return (
     <div id='map'>
@@ -150,7 +167,7 @@ export default function Map({ coords, markersCoordinates, setLiveDist, address, 
                   <TileLayer
                     className='TileLayer'
                     url={map.url}
-                    attribution={map.attribution}
+                    attribution={shortenString(map.attribution)}
                   />
                 </BaseLayer>);
             }

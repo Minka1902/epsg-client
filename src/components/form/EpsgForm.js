@@ -22,7 +22,7 @@ export default function LatLonForm(props) {
                 if (epsgInput === 'X' || epsgInput === 'x') {
                     onSubmit({ x: parseFloat(longtitudeInput), y: parseFloat(latitudeInput), isX: true });
                 } else {
-                    onSubmit({ fromEpsg: epsgInput, x: parseFloat(longtitudeInput), y: parseFloat(latitudeInput) });
+                    onSubmit({ fromEpsg: epsgInput, x: parseFloat(latitudeInput), y: parseFloat(longtitudeInput) });
                 }
             }
         }
@@ -93,7 +93,7 @@ export default function LatLonForm(props) {
     }, [epsgInput]);
 
     return (
-        <form id="lat-lon-form" className="form">
+        <form id="epsg-form" className="form">
             <h3 className='input-title'>EPSG: (Default X)</h3>
             <input
                 className="form__input"
@@ -106,12 +106,12 @@ export default function LatLonForm(props) {
                 value={epsgInput}
                 onChange={(evt) => setEpsgInput(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isEpsgInputCorrect ? '' : '_visible'}`}>EPSG incorrect / non-existing</p>
+            <p className={`error-massage${isEpsgInputCorrect ? '' : '_visible'}`}>EPSG incorrect{window.innerHeight <= 599 ? ' / non-existing' : ''}</p>
 
             <h3 className='input-title'>Y coordinate:</h3>
             <input
                 className="form__input"
-                placeholder="Enter Y coordinates / import file"
+                placeholder="Enter Y coordinates"
                 id="longtitude-input"
                 type="text"
                 name="longtitudeInput"
@@ -120,12 +120,12 @@ export default function LatLonForm(props) {
                 value={longtitudeInput}
                 onChange={(evt) => setLongtitudeInput(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isLongtitudeInputCorrect ? '' : '_visible'}`}>Longtitude incorrect</p>
+            <p className={`error-massage${isLongtitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 599 ? 'Incorrect' : 'Longtitude incorrect'}</p>
 
             <h3 className='input-title'>X coordinate:</h3>
             <input
                 className="form__input"
-                placeholder="Enter X coordinates / import file"
+                placeholder="Enter X coordinates"
                 id="latitude-input"
                 type="text"
                 name="latitudeInput"
@@ -134,7 +134,7 @@ export default function LatLonForm(props) {
                 value={latitudeInput}
                 onChange={(evt) => setLatitudeInput(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isLatitudeInputCorrect ? '' : '_visible'}`}>Latitude incorrect</p>
+            <p className={`error-massage${isLatitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 599 ? 'Incorrect' : 'Latitude incorrect'}</p>
             <button onClick={onFormSubmit} type="submit" name="search-coord" className={`form__button${isFormValid ? '' : '_invalid'}`}>
                 Find Coordinates
             </button>

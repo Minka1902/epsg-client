@@ -1,6 +1,7 @@
 import React from 'react';
 import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
+import { BrowserRouter as Router, Route, Switch, Routes } from 'react-router-dom';
 import PrettyTable from '../prettyTable/PrettyTable';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
@@ -26,9 +27,10 @@ export default function App() {
   const [distance, setDistance] = React.useState(false);
   const [liveDistance, setLiveDistance] = React.useState(false);
   const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
-  const [epsgForm, setEpsgForm] = React.useState({});   // eslint-disable-next-line
+  const [epsgForm, setEpsgForm] = React.useState({});
   const [list, setList] = React.useState([]);
   const [markersCoordinates, setMarkersCoordinates] = React.useState([]);
+  const [boundingBox, setBoundingBox] = React.useState([]);
   const epsg = require('epsg');
 
   const togglePointer = () => {
@@ -206,7 +208,6 @@ export default function App() {
   // ! Sets the map for the first time
   React.useEffect(() => {
     onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
-    // lengthOfLastWord('moon ');
   }, []);
 
   return (
@@ -219,6 +220,7 @@ export default function App() {
         isView={isView}
         isPointer={isPointer}
         markersCoordinates={markersCoordinates}
+        bbox={boundingBox}
         rulerClick={rulerClick}
         findEpsgClick={clickLocation}
         copyClicked={copyCoordsClick}
@@ -241,19 +243,20 @@ export default function App() {
           copyLocationClickable={setDidCopyTrue}
           onChooseEpsgLocation={setIsClickableTrue}
         />
-        {copyCoords ? <h2 className='app__coordinates'>Lat: {copyCoords.lat.toFixed(5)}, Lng: {copyCoords.lng.toFixed(5)}</h2> : <></>}
+        {copyCoords ? <h2 className='app__coordinates'>Lat/Lng:{window.innerWidth <= 599 ? <br /> : <></>} {copyCoords.lat.toFixed(5)}{window.innerWidth <= 599 ? <br /> : ', '}{copyCoords.lng.toFixed(5)}</h2> : <></>}
         <DropdownControl>
           <LatLonForm onSubmit={onCoordinateSubmit} />
-          <RadioMenu>
+          {window.innerWidth >= 599 ? <RadioMenu>
             <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />
             <FileInput onFileChoose={setFileData} />
-          </RadioMenu>
+          </RadioMenu> :
+            <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />}
         </DropdownControl>
-        <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3>
-        <h4 className='app__location-info'>Location info: <br />{address}</h4>
-        {distance ? <h3 className='app__distance'>Final distance: {distance} km</h3> : <></>}
-        {epsgTable[4] ? <PrettyTable data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
-        {isRuler ? <h3 className='app__distance'>live distance: {liveDistance} km</h3> : <></>}
+        {window.innerWidth >= 599 ? <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3> : <></>}
+        {window.innerWidth >= 599 ? <h3 className='app__location-info'>Location info: <br />{address}</h3> : <></>}
+        {distance ? <h3 className='app__distance'>Distance: {distance} km</h3> : <></>}
+        {epsgTable[4] ? <PrettyTable isWidth={window.innerWidth <= 599} data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
+        {isRuler ? <h3 className={`app__distance${window.innerWidth <= 599 ? '_hidden' : ''}`}>live distance: {liveDistance} km</h3> : <></>}
       </div>
     </div >
   );

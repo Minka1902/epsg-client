@@ -13,9 +13,6 @@
 /* ! button box */
 @import url('./components/buttonBox/buttonBox.css');
 
-/* ! preloader */
-@import url('./components/preloader/preloader.css');
-
 /* ! dropdown */
 @import url('./components/dropdownControl/dropdown.css');
 

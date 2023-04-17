@@ -36,3 +36,35 @@
     padding: 5px;
     z-index: 1;
 }
+
+@media only screen and (max-width: 599px) {
+    .dropdown__button {
+        font-size: 14px;
+        padding: 0;
+        text-align: center;
+    }
+
+    .dropdown__button_opened {
+        font-size: 14px;
+        padding: 0;
+        text-align: center;
+    }
+
+    .dropdown__menu {
+        padding: 5px 0 5px 0;
+    }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 1199px) {
+    .dropdown__button {
+        font-size: 14px;
+        text-align: center;
+        padding: 0;
+    }
+
+    .dropdown__button_opened {
+        font-size: 14px;
+        text-align: center;
+        padding: 0;
+    }
+}

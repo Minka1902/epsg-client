@@ -4,7 +4,7 @@
 }
 
 .table-container_invissible {
-  visibility: hidden;
+  display: none;
 }
 
 .table__toggle-button {
@@ -18,11 +18,11 @@
   height: 30px;
 }
 
-.table__toggle-button:hover{
+.table__toggle-button:hover {
   opacity: 0.3;
 }
 
-._toggled{
+._toggled {
   transform: rotate(180deg);
 }
 
@@ -77,4 +77,16 @@ td:first-child {
 td:last-child {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+}
+
+@media (max-width: 599px) {
+  .table-container {
+    margin: 0;
+    width: 100%;
+  }
+
+  .table__toggle-button {
+    left: 0;
+    margin: 0;
+  }
 }
