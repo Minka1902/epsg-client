@@ -9,7 +9,7 @@ class osmApi {
     }).then(this._handleResponseJson)
 
   _bbox = ({ method = "GET", data }) =>
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&viewbox=${data[0], data[1], data[2], data[3]}&bounded=1`, {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&viewbox=${data[0]},${data[1]},${data[2]},${data[3]}}&bounded=1`, {
       method
     }).then(this._handleResponseJson)
 

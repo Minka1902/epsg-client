@@ -1,7 +1,6 @@
 import React from 'react';
 import proj4 from 'proj4';
 import osmApiOBJ from '../../utils/osmApi';
-import { BrowserRouter as Router, Route, Switch, Routes } from 'react-router-dom';
 import PrettyTable from '../prettyTable/PrettyTable';
 import Map from '../map/Map';
 import LatLonForm from '../form/LatLonForm';
