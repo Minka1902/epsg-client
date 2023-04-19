@@ -23,7 +23,7 @@
     text-align: center;
 }
 
-.app__distance_hidden{
+.app__distance_hidden {
     display: none;
 }
 
@@ -80,7 +80,7 @@ h3.app__coordinates {
         line-height: 13px;
     }
 
-    .app__conteiner{
+    .app__conteiner {
         width: 25%;
     }
 
@@ -88,5 +88,43 @@ h3.app__coordinates {
         margin-top: 3px;
         font-size: 13px;
         line-height: 14px;
+    }
+
+    .app__location-info {
+        width: 100%;
+        text-align: center;
+        margin: 5px 10%;
+        line-height: 13px;
+        font-size: 12px;
+    }
+
+    h3.app__coordinates {
+        line-height: 13px;
+        font-size: 12px;
+        width: 100%;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1200px) {
+    .app__location-info {
+        width: calc(100% - 10px);
+        text-align: center;
+        margin: 5px;
+        line-height: 13px;
+        font-size: 12px;
+    }
+
+    h3.app__coordinates {
+        width: calc(100% - 10px);
+        line-height: 13px;
+        font-size: 12px;
+        margin: 5px;
+    }
+
+    .app__coordinates {
+        width: 100%;
+        margin: 0;
+        line-height: 13px;
+        font-size: 12px;
     }
 }

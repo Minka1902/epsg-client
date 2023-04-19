@@ -3,7 +3,7 @@ import React from 'react';
 // TODO  data = {epsg: epsgCode, distance: (coords to point0), point0}
 // ?     <Table tableHeaders={['Id', 'Name', 'Email']} data={data} />
 export default function PrettyTable(props) {
-    const { tableHeaders, data, coordinates, isWidth } = props;
+    const { tableHeaders, data, coordinates, isWidth = window.innerWidth >= 1050 ? true : false } = props;
     const [isTableOpen, setIsTableOpen] = React.useState(true);
 
     const toggleIsTableOpen = () => setIsTableOpen(!isTableOpen);
@@ -51,7 +51,7 @@ export default function PrettyTable(props) {
                             {data.map((item, index) => (
                                 <tr key={index}>
                                     <td>{item.epsg}<br />
-                                        {item.distance}
+                                        Dist: {item.distance}
                                     </td>
                                 </tr>
                             ))}

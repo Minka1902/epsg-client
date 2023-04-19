@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function RadioMenu({ children }) {
+export default function RadioMenu({ children, titles }) {
     const [mode, setMode] = React.useState('form');
 
     const handleModeChange = (event) => {

@@ -20,7 +20,28 @@ export const wordCount = (text) => {
         }
     }
     return counter;
-}
+};
+
+// ! 	gets a url path and values to extract from it, works ONLY with numbers
+// TODO getValuesFromPath({ path: '/coordinates?x=1.2,3.4,5.6&y=7.8,9.0,10.11', values: ['x', 'y'] });
+// ?    [x: [1.2, 3.4, 5.6], y: [7.8, 9, 10.11]]
+export const getValuesFromPath = ({ path, values }) => {
+    let tempObj = [];
+    for (let i = 0; i < values.length; i++) {
+        let startIndex = path.indexOf(values[i]) + 2;
+        let endIndex = path.indexOf('&', startIndex);
+        if (startIndex !== -1 && endIndex !== -1) {
+            tempObj[values[i]] = path.slice(startIndex, endIndex);
+        } else {
+            endIndex = path.length;
+            if (startIndex !== -1 && endIndex !== -1) {
+                tempObj[values[i]] = path.slice(startIndex, endIndex);
+            }
+        }
+        tempObj[values[i]] = tempObj[values[i]].split(',').map(parseFloat)
+    }
+    return tempObj;
+};
 
 // ! 	gets a string and the desired length.
 // TODO changeStringLength("i am michael scharff", 12);
@@ -50,6 +71,12 @@ export const findElementByName = (str, elementToFind, isReactComponent = false) 
         newStr += str[startIndex + i];
     }
     return newStr;
+};
+
+export const addClassToElement = (str, elementToFind, classToAdd) => {
+    const class_name = ` class='${classToAdd}'`
+    let elementIndex = str.indexOf('>', str.indexOf(elementToFind));
+    return str.slice(0, elementIndex) + class_name + str.slice(elementIndex);
 }
 
 // ! 	gets an array of numbers and removes all the duplictes from it
@@ -71,7 +98,7 @@ export const removeDuplicates = (nums) => {
 // ?  	Hello world.
 export const capitalizeFirstWord = (str) => {
     return str.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
-}
+};
 
 // ! 	gets 2 locations and calculates distance between them (lat, lng)
 // TODO calcDistance({ lat1: 31.89286, lon1: 35.03255, lat2: 31.88159, lon2: 34.99352 })
@@ -87,14 +114,14 @@ export const calcDistance = ({ lat1, lon1, lat2, lon2 }) => {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distance in km
     return (distance.toFixed(3));
-}
+};
 
 // ! 	gets a numeric degree and converts it to radians
 // TODO deg2rad(31.88159 - 31.89286)
 // ?  	-0.00019669860669975517
 const deg2rad = (deg) => {
     return deg * (Math.PI / 180);
-}
+};
 
 // ! 	gets a string and returns it as 5 words and ... at the end
 // TODO shortenString("This is a long string with more than five words in it.")
@@ -106,7 +133,7 @@ export const shortenString = (str) => {
         shortStr += " ...";
     }
     return shortStr;
-}
+};
 
 export const mincostTickets = (days, costs) => {
     const [_1day, _7day, _30day] = [0, 1, 2];
@@ -162,3 +189,14 @@ export const numRescueBoats = (people, limit) => {
 
     return rides;
 };
+
+// ! 	gets an element and id and returns the class list of the desired element 
+// TODO getClassListById(element, 'ID');
+// ?  	This is a long string with ...
+export const getClassListById = (elem, idToFind) => {
+    if (elem.id === idToFind) {
+        return elem.classList;
+    } else {
+        return getClassListById(elem.parentElement);
+    }
+}

@@ -104,29 +104,41 @@
 
 @media (min-width: 600px) and (max-width: 1200px) {
     .button-box {
-        flex-wrap: wrap;
-        justify-content: center;
+        width: calc(100% - 10px);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        grid-gap: 5px;
+        padding: 5px;
+    }
+
+    .button-box_modified {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        grid-gap: 5px;
+        padding: 5px;
+        margin-bottom: 34px;
     }
 
     .button-box__button {
-        font-size: 16px;
-        padding: 8px;
-        margin: 6px;
+        padding: 6px;
+        margin: 0;
         width: 18px;
         height: 18px;
     }
 
     .button-box__button_disabled {
-        width: 16px;
-        height: 16px;
-        font-size: 12px;
-        padding: 4px;
-        margin: 4px;
+        padding: 6px;
+        margin: 0;
+        width: 18px;
+        height: 18px;
     }
 
     .button-box__button_clicked {
-        font-size: 16px;
         padding: 6px;
-        margin: 6px;
+        margin: 0;
+        width: 18px;
+        height: 18px;
     }
 }

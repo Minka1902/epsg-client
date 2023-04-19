@@ -109,6 +109,8 @@
   .form__input {
     width: 90%;
     margin: 0 auto;
+    font-size: 12px;
+    line-height: 13px;
   }
 
   .form {
@@ -123,13 +125,44 @@
     padding: 0;
   }
 
-  .error-massage{
+  .error-massage {
     margin: 0;
   }
 
-  .error-massage_visible{
+  .error-massage_visible {
     margin: 0;
   }
 }
 
-@media only screen and (min-width: 600px) and (max-width: 1199px) {}
+@media only screen and (min-width: 600px) and (max-width: 1199px) {
+  .form {
+    margin: 0;
+    width: 100%;
+  }
+
+  .form__button {
+    width: calc(100% - 5px);
+    margin: 0;
+  }
+
+  .form__input {
+    width: 90%;
+    margin: 0 auto;
+    padding: 0;
+    line-height: 13px;
+    font-size: 11px;
+  }
+
+  .input-title {
+    margin: 2px 0 0 0;
+    line-height: 13px;
+  }
+
+  .error-massage {
+    margin: 0;
+  }
+
+  .error-massage_visible {
+    margin: 0;
+  }
+}

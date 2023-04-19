@@ -204,6 +204,34 @@ export default function App() {
     }
   };
 
+  const getCoordinatesFromUrl = ({ fromEpsg, evt }) => {
+    let class_list = '';
+    let newList;
+    if (evt.target.id !== 'root') {
+      class_list = getClassListById(evt.target.parentElement, 'root');
+    }
+    if (class_list) {
+      newList = class_list[0].split(',').map(parseFloat);
+    }
+    removeClassesFromElement(getClassListById(evt.target, 'root'));
+    setList(newList);
+    epsgMarkerChange({ fromEpsg });
+  };
+
+  const getClassListById = (elem, idToFind) => {
+    if (elem.id === 'root') {
+      return elem.classList;
+    } else {
+      return getClassListById(elem.parentElement, idToFind);
+    }
+  }
+
+  const removeClassesFromElement = (element) => {
+    for (let i = 0; i < element.classList.length; i++) {
+      element.classList.remove(element.classList[0]);
+    }
+  };
+
   // ! Sets the map for the first time
   React.useEffect(() => {
     onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
@@ -242,11 +270,11 @@ export default function App() {
           copyLocationClickable={setDidCopyTrue}
           onChooseEpsgLocation={setIsClickableTrue}
         />
-        {copyCoords ? <h2 className='app__coordinates'>Lat/Lng:{window.innerWidth <= 599 ? <br /> : <></>} {copyCoords.lat.toFixed(5)}{window.innerWidth <= 599 ? <br /> : ', '}{copyCoords.lng.toFixed(5)}</h2> : <></>}
+        {copyCoords ? <h2 className='app__coordinates'>Lng/Lat:{window.innerWidth <= 599 ? '<br />' : <></>} {copyCoords.lat.toFixed(5)}{window.innerWidth <= 599 ? <br /> : ', '}{copyCoords.lng.toFixed(5)}</h2> : <></>}
         <DropdownControl>
           <LatLonForm onSubmit={onCoordinateSubmit} />
-          {window.innerWidth >= 599 ? <RadioMenu>
-            <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />
+          {window.innerWidth >= 1200 ? <RadioMenu titles={['default', 'file']}>
+            <EpsgForm markersChange={getCoordinatesFromUrl} onSubmit={epsgConvert} />
             <FileInput onFileChoose={setFileData} />
           </RadioMenu> :
             <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />}
@@ -254,7 +282,7 @@ export default function App() {
         {window.innerWidth >= 599 ? <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3> : <></>}
         {window.innerWidth >= 599 ? <h3 className='app__location-info'>Location info: <br />{address}</h3> : <></>}
         {distance ? <h3 className='app__distance'>Distance: {distance} km</h3> : <></>}
-        {epsgTable[4] ? <PrettyTable isWidth={window.innerWidth <= 599} data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
+        {epsgTable[4] ? <PrettyTable data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
         {isRuler ? <h3 className={`app__distance${window.innerWidth <= 599 ? '_hidden' : ''}`}>live distance: {liveDistance} km</h3> : <></>}
       </div>
     </div >

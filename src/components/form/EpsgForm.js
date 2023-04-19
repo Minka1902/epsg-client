@@ -2,7 +2,7 @@ import React from "react";
 
 export default function LatLonForm(props) {
     const epsg = require('epsg');
-    const { onSubmit, markersChange } = props;
+    const { onSubmit, markersChange, getCoordinatesFromUrl } = props;
     const [longtitudeInput, setLongtitudeInput] = React.useState('');
     const [latitudeInput, setLatitudeInput] = React.useState('');
     const [epsgInput, setEpsgInput] = React.useState('');
@@ -17,7 +17,7 @@ export default function LatLonForm(props) {
             onSubmit({ isX: true, x: parseFloat(longtitudeInput), y: parseFloat(latitudeInput) });
         } else {
             if (epsgInput !== '' && longtitudeInput === '' && latitudeInput === '') {
-                markersChange({ fromEpsg: epsgInput });
+                markersChange({ fromEpsg: epsgInput, evt: evt });
             } else {
                 if (epsgInput === 'X' || epsgInput === 'x') {
                     onSubmit({ x: parseFloat(longtitudeInput), y: parseFloat(latitudeInput), isX: true });
@@ -97,16 +97,16 @@ export default function LatLonForm(props) {
             <h3 className='input-title'>EPSG: (Default X)</h3>
             <input
                 className="form__input"
-                placeholder="Enter EPSG. if you don't know it enter X"
-                id="epsg-input1"
+                placeholder="Enter EPSG."
+                id="epsg-input"
                 type="text"
-                name="epsgInput1"
+                name="epsgInput"
                 minLength="2"
-                maxLength="40"
+                maxLength="6"
                 value={epsgInput}
                 onChange={(evt) => setEpsgInput(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isEpsgInputCorrect ? '' : '_visible'}`}>EPSG incorrect{window.innerHeight <= 599 ? ' / non-existing' : ''}</p>
+            <p className={`error-massage${isEpsgInputCorrect ? '' : '_visible'}`}>EPSG incorrect</p>
 
             <h3 className='input-title'>Y coordinate:</h3>
             <input
@@ -120,7 +120,7 @@ export default function LatLonForm(props) {
                 value={longtitudeInput}
                 onChange={(evt) => setLongtitudeInput(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isLongtitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 599 ? 'Incorrect' : 'Longtitude incorrect'}</p>
+            <p className={`error-massage${isLongtitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 1200 ? 'Incorrect' : 'Longtitude incorrect'}</p>
 
             <h3 className='input-title'>X coordinate:</h3>
             <input
@@ -134,7 +134,7 @@ export default function LatLonForm(props) {
                 value={latitudeInput}
                 onChange={(evt) => setLatitudeInput(evt.currentTarget.value)}
             />
-            <p className={`error-massage${isLatitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 599 ? 'Incorrect' : 'Latitude incorrect'}</p>
+            <p className={`error-massage${isLatitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 1200 ? 'Incorrect' : 'Latitude incorrect'}</p>
             <button onClick={onFormSubmit} type="submit" name="search-coord" className={`form__button${isFormValid ? '' : '_invalid'}`}>
                 Find Coordinates
             </button>
