@@ -5,9 +5,23 @@ import App from './components/app/App.js';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const getCoordinatesFromUrl = () => {
+  const epsg = require('epsg');
+  let toProj = epsg[`EPSG:4326`];
+  let fromProj;
+  let class_list = root._internalRoot.containerInfo.classList;
+  if (class_list.length === 1) {
+    return { list: class_list[0].split(',').map(parseFloat) };
+  } else {
+    fromProj = epsg[`EPSG:${class_list[0]}`];
+    return { x1: class_list[1], y1: class_list[2], x2: class_list[3], y2: class_list[4], format: class_list[5], toProj: toProj, fromProj: fromProj };
+  }
+};
+
 root.render(
   <React.StrictMode>
-    <App />
+    <App urlInfo={getCoordinatesFromUrl()} />
   </React.StrictMode>
 );
 

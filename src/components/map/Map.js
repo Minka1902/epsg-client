@@ -7,7 +7,7 @@ import { maps } from '../../constants/mapOptions';
 import { greenMarker, blackMarker, blueMarker, customMarker2 } from '../../constants/markers';
 import { calcDistance, shortenString } from '../../constants/functions';
 
-export default function Map({ coords, markersCoordinates, bbox, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
+export default function Map({ coords, format, markersCoordinates, bbox, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
   const mapRef = React.useRef();
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
@@ -68,8 +68,8 @@ export default function Map({ coords, markersCoordinates, bbox, setLiveDist, add
           link.href = canvas.toDataURL('image/jpeg');
           link.download = 'map.jpeg'; // ! downloads the image.png as map.png
           // link.click();
-          console.log(link.href);
-          console.log(window.location.href);
+          // console.log(link.href);
+          // console.log(window.location.href);
         }
       });
     }
@@ -163,7 +163,7 @@ export default function Map({ coords, markersCoordinates, bbox, setLiveDist, add
           {maps.map((map, index) => {
             if (map.valid) {
               return (
-                <BaseLayer checked={map.checked} name={map.name} key={index}>
+                <BaseLayer checked={map.name.toLowerCase() === format ? true : map.checked} name={map.name} key={index}>
                   <TileLayer
                     className='TileLayer'
                     url={map.url}

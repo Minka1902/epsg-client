@@ -197,6 +197,6 @@ export const getClassListById = (elem, idToFind) => {
     if (elem.id === idToFind) {
         return elem.classList;
     } else {
-        return getClassListById(elem.parentElement);
+        return getClassListById(elem.parentElement, idToFind);
     }
 }

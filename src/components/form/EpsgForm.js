@@ -2,7 +2,7 @@ import React from "react";
 
 export default function LatLonForm(props) {
     const epsg = require('epsg');
-    const { onSubmit, markersChange, getCoordinatesFromUrl } = props;
+    const { onSubmit, markersChange } = props;
     const [longtitudeInput, setLongtitudeInput] = React.useState('');
     const [latitudeInput, setLatitudeInput] = React.useState('');
     const [epsgInput, setEpsgInput] = React.useState('');
@@ -29,8 +29,8 @@ export default function LatLonForm(props) {
     };
 
     const checkCoordinate = (coordinate) => {
-        const coordinateRegExp = /^(?:0|[1-9][0-9]*)\.[0-9]+$/;
-        if (epsgInput === '4326') {
+        const coordinateRegExp = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
+        if (epsgInput !== '4326') {
             if (coordinateRegExp.test(coordinate)) {
                 if (coordinate.length !== 0) {
                     return true;

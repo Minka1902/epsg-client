@@ -1,6 +1,6 @@
 .table-container {
-  margin: 10px 0;
-  width: 100%;
+  margin: 10px 5%;
+  width: 90%;
 }
 
 .table-container_invissible {
@@ -102,27 +102,3 @@ td:last-child {
     margin: 0;
   }
 }
-
-/* @media only screen and (min-width: 600px) and (max-width: 1199px) {
-  th {
-    line-height: 13px;
-    font-size: 12px;
-    padding: 6px;
-  }
-
-  .table-container {
-    margin: 0;
-    width: 100%;
-  }
-
-  td {
-    line-height: 13px;
-    font-size: 12px;
-    padding: 6px;
-  }
-
-  .table__toggle-button {
-    left: 0;
-    margin: 0;
-  }
-} */

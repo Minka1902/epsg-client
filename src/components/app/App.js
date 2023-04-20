@@ -12,7 +12,7 @@ import { calcDistance } from '../../constants/functions';
 import FileInput from '../fileInput/FileInput';
 import RadioMenu from '../radioMenu/RadioMenu';
 
-export default function App() {
+export default function App({ urlInfo }) {
   const [coords, setCoords] = React.useState([31.89291, 35.03254]);
   const [copyCoords, setCopyCoords] = React.useState(null);
   const [address, setAddress] = React.useState('');
@@ -27,7 +27,8 @@ export default function App() {
   const [liveDistance, setLiveDistance] = React.useState(false);
   const [isEpsgFormFilled, setIsEpsgFormFilled] = React.useState(false);
   const [epsgForm, setEpsgForm] = React.useState({});
-  const [list, setList] = React.useState([]);
+  const [list, setList] = React.useState(urlInfo.list ? urlInfo.list : []); // eslint-disable-next-line
+  const [format, setFormat] = React.useState(urlInfo.format ? urlInfo.format : null);
   const [markersCoordinates, setMarkersCoordinates] = React.useState([]);
   const [boundingBox, setBoundingBox] = React.useState([]);
   const epsg = require('epsg');
@@ -113,7 +114,7 @@ export default function App() {
       });
   };
 
-  // ! 
+  // ! takes the coordinates list and converts it to the epsg imported
   const epsgMarkerChange = ({ fromEpsg }) => {
     let fromProj = epsg[`EPSG:${fromEpsg}`];
     let toProj4326 = epsg[`EPSG:4326`];
@@ -204,38 +205,37 @@ export default function App() {
     }
   };
 
-  const getCoordinatesFromUrl = ({ fromEpsg, evt }) => {
-    let class_list = '';
-    let newList;
-    if (evt.target.id !== 'root') {
-      class_list = getClassListById(evt.target.parentElement, 'root');
-    }
-    if (class_list) {
-      newList = class_list[0].split(',').map(parseFloat);
-    }
-    removeClassesFromElement(getClassListById(evt.target, 'root'));
-    setList(newList);
-    epsgMarkerChange({ fromEpsg });
-  };
-
-  const getClassListById = (elem, idToFind) => {
-    if (elem.id === 'root') {
-      return elem.classList;
-    } else {
-      return getClassListById(elem.parentElement, idToFind);
-    }
-  }
-
-  const removeClassesFromElement = (element) => {
-    for (let i = 0; i < element.classList.length; i++) {
-      element.classList.remove(element.classList[0]);
-    }
-  };
+  // React.useEffect(() => {
+  //   onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
+  // }, []);
 
   // ! Sets the map for the first time
   React.useEffect(() => {
-    onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
-  }, []);
+    if (urlInfo.toProj) {
+      let x1 = parseFloat(urlInfo.x1);
+      let x2 = parseFloat(urlInfo.x2);
+      let y1 = parseFloat(urlInfo.y1);
+      let y2 = parseFloat(urlInfo.y2);
+      let coordinates1, coordinates2;
+      if (x1 && y1) {
+        if (urlInfo.toProj === urlInfo.fromProj) {
+          coordinates1 = proj4(urlInfo.fromProj, [y1, x1]);
+        } else {
+          coordinates1 = proj4(urlInfo.fromProj, urlInfo.toProj, [x1, y1]);
+        }
+      }
+      if (x2 && y2) {
+        if (urlInfo.toProj === urlInfo.fromProj) {
+          coordinates2 = proj4(urlInfo.fromProj, [y2, x2]);
+        } else {
+          coordinates2 = proj4(urlInfo.fromProj, urlInfo.toProj, [x2, y2]);
+        }
+      }
+      setBoundingBox([coordinates2[1], coordinates1[1], coordinates2[0], coordinates1[0]]);
+    } else {
+      onCoordinateSubmit({ x: 35.03254, y: 31.89291 });
+    }                                                     // eslint-disable-next-line
+  }, [])
 
   return (
     <div id='content'>
@@ -248,6 +248,7 @@ export default function App() {
         isPointer={isPointer}
         markersCoordinates={markersCoordinates}
         bbox={boundingBox}
+        format={format ? format : 'standart'}
         rulerClick={rulerClick}
         findEpsgClick={clickLocation}
         copyClicked={copyCoordsClick}
@@ -270,17 +271,17 @@ export default function App() {
           copyLocationClickable={setDidCopyTrue}
           onChooseEpsgLocation={setIsClickableTrue}
         />
-        {copyCoords ? <h2 className='app__coordinates'>Lng/Lat:{window.innerWidth <= 599 ? '<br />' : <></>} {copyCoords.lat.toFixed(5)}{window.innerWidth <= 599 ? <br /> : ', '}{copyCoords.lng.toFixed(5)}</h2> : <></>}
+        {copyCoords ? <h2 className='app__coordinates'>Lng/Lat:{window.innerWidth <= 599 ? <br /> : <></>} {copyCoords.lat.toFixed(5)}{window.innerWidth <= 599 ? <br /> : ', '}{copyCoords.lng.toFixed(5)}</h2> : <></>}
         <DropdownControl>
           <LatLonForm onSubmit={onCoordinateSubmit} />
-          {window.innerWidth >= 1200 ? <RadioMenu titles={['default', 'file']}>
-            <EpsgForm markersChange={getCoordinatesFromUrl} onSubmit={epsgConvert} />
+          {window.innerWidth >= 1200 ? <RadioMenu>
+            <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />
             <FileInput onFileChoose={setFileData} />
           </RadioMenu> :
             <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />}
         </DropdownControl>
         {window.innerWidth >= 599 ? <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3> : <></>}
-        {window.innerWidth >= 599 ? <h3 className='app__location-info'>Location info: <br />{address}</h3> : <></>}
+        {window.innerWidth >= 599 && address ? <h3 className='app__location-info'>Location info: <br />{address}</h3> : <></>}
         {distance ? <h3 className='app__distance'>Distance: {distance} km</h3> : <></>}
         {epsgTable[4] ? <PrettyTable data={epsgTable} tableHeaders={['Rank', 'Possible EPSG', 'Distance (km)']} coordinates={epsgCoords} /> : <></>}
         {isRuler ? <h3 className={`app__distance${window.innerWidth <= 599 ? '_hidden' : ''}`}>live distance: {liveDistance} km</h3> : <></>}

@@ -4,7 +4,7 @@ export const options = {
 }
 
 export const maps = [
-    { valid: true, checked: true, name: "Standart", url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' },
+    { valid: true, checked: false, name: "Standart", url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' },
     { valid: true, checked: false, name: "Topography", url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' },
     { valid: true, checked: false, name: "Satellite", url: `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`, attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community' },
     { valid: false, checked: false, name: "Cycle", url: `https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=${options.cyclemapToken}`, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' },
