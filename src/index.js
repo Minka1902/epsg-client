@@ -10,7 +10,10 @@ const getCoordinatesFromUrl = () => {
   const epsg = require('epsg');
   let toProj = epsg[`EPSG:4326`];
   let fromProj;
-  let class_list = root._internalRoot.containerInfo.classList;
+  let class_list = [...root._internalRoot.containerInfo.classList];
+  for (let i = 0; i < class_list.length; i++) {
+    root._internalRoot.containerInfo.classList.remove(class_list[i]);
+  }
   if (class_list.length === 1) {
     return { list: class_list[0].split(',').map(parseFloat) };
   } else {
