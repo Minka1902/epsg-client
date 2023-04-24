@@ -205,13 +205,9 @@ export default function App({ urlInfo }) {
     }
   };
 
-  // React.useEffect(() => {
-  //   onCoordinateSubmit({ x: 35.03254, y: 31.89291 });   // eslint-disable-next-line
-  // }, []);
-
   // ! Sets the map for the first time
   React.useEffect(() => {
-    if (urlInfo.toProj) {
+    if (urlInfo.x1 && urlInfo.fromProj) {
       let x1 = parseFloat(urlInfo.x1);
       let x2 = parseFloat(urlInfo.x2);
       let y1 = parseFloat(urlInfo.y1);
@@ -274,10 +270,11 @@ export default function App({ urlInfo }) {
         {copyCoords ? <h2 className='app__coordinates'>Lng/Lat:{window.innerWidth <= 599 ? <br /> : <></>} {copyCoords.lat.toFixed(5)}{window.innerWidth <= 599 ? <br /> : ', '}{copyCoords.lng.toFixed(5)}</h2> : <></>}
         <DropdownControl>
           <LatLonForm onSubmit={onCoordinateSubmit} />
-          {window.innerWidth >= 1200 ? <RadioMenu>
-            <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />
-            <FileInput onFileChoose={setFileData} />
-          </RadioMenu> :
+          {window.innerWidth >= 1200 ?
+            <RadioMenu>
+              <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />
+              <FileInput onFileChoose={setFileData} />
+            </RadioMenu> :
             <EpsgForm markersChange={epsgMarkerChange} onSubmit={epsgConvert} />}
         </DropdownControl>
         {window.innerWidth >= 599 ? <h3 className={`app__coordinates`}>Marker Lat/Lng coordinates: <br />{coords[0].toFixed(5)}, {coords[1].toFixed(5)}</h3> : <></>}

@@ -5,7 +5,6 @@ import App from './components/app/App.js';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
 const getCoordinatesFromUrl = () => {
   const epsg = require('epsg');
   let toProj = epsg[`EPSG:4326`];
@@ -24,7 +23,7 @@ const getCoordinatesFromUrl = () => {
 
 root.render(
   <React.StrictMode>
-    <App urlInfo={getCoordinatesFromUrl()} />
+    <App urlInfo={root._internalRoot.containerInfo.classList ? getCoordinatesFromUrl() : null} />
   </React.StrictMode>
 );
 

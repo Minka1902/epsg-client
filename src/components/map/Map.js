@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import leafletImage from 'leaflet-image';
 import { MapContainer, Tooltip, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import React from 'react';
+import domtoimage from 'dom-to-image';
 import { maps } from '../../constants/mapOptions';
 import { greenMarker, blackMarker, blueMarker, customMarker2 } from '../../constants/markers';
 import { calcDistance, shortenString } from '../../constants/functions';
@@ -12,6 +13,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
   const mapRef = React.useRef();
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
   const [markerArray, setMarkerArray] = React.useState([]);
+  const [isMarkers, setIsMarker] = React.useState(false);
 
   function ClickLocation() { // eslint-disable-next-line
     const map = useMapEvents({
@@ -32,6 +34,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
   function SetViewOnClick({ coords, isActive, setViewFalse }) {
     const map = useMap();
     if (isActive) {
+      setIsMarker(true);
       map.flyTo(coords, 18);
       setViewFalse();
     }
@@ -56,20 +59,30 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
     });
   }
 
-  const handleExportImage = () => {
+  const handleExportImage = (evt) => {
+    if (evt) {
+      const node = document.getElementById('map');
+      domtoimage.toPng(node)
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = 'map.png'; // ! downloads the image.png as map.png
+          link.click();
+        })
+        .catch(function (error) {
+          console.error('oops, something went wrong!', error);
+        });
+    }
     if (mapRef.current) {
       const map = mapRef.current;
       leafletImage(map, (err, canvas) => {
         if (err) {
           console.error('Error exporting map as image:', err);
         } else {
-          // const link = document.createElement('a');
-          const link = {};
-          link.href = canvas.toDataURL('image/jpeg');
-          link.download = 'map.jpeg'; // ! downloads the image.png as map.png
-          // link.click();
-          // console.log(link.href);
-          // console.log(window.location.href);
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = 'map.png'; // ! downloads the image.png as map.png
+          link.click();
         }
       });
     }
@@ -99,11 +112,9 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
     setMarkerArray(tempArray);
   }, [markersCoordinates, markerData]);
 
-
-  // ? once the bounding box is set it will open it
+  // ? once the bounding box is set it will open
   React.useEffect(() => {
     const map = mapRef.current;
-
     if (bbox[3]) {
       const bounds = [
         [bbox[0], bbox[2]],
@@ -111,6 +122,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
       ];
       map.whenReady(() => {
         map.fitBounds(bounds);
+        handleExportImage();
       });
     }
   }, [bbox]);
@@ -127,24 +139,25 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
         dragging={true}
         ref={mapRef}
       >
+
         <Pointer />
         {children}
         <SetViewOnClick coords={coords} isActive={isView} setViewFalse={setViewFalse} />
         {isClickable || didCopy ? <ClickLocation /> : <></>}
 
         <Tooltip sticky />
-        <Marker position={coords} icon={blueMarker}>
+        {isMarkers ? <Marker position={coords} icon={blueMarker}>
           <Popup>
             {address ? address : `We dont have any information about this location.`}
           </Popup>
-        </Marker>
+        </Marker> : <></>}
 
         {isRuler ?
           <Polyline positions={rulerCoords} />
           :
           <></>}
 
-        {markerArray.map((marker, index) => (
+        {isMarkers ? markerArray.map((marker, index) => (
           marker.isTable ?
             <Marker key={index} icon={index === 0 ? greenMarker : blackMarker} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
               <Popup>
@@ -154,10 +167,10 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
             :
             <Marker key={index} icon={customMarker2} position={[marker.wgs84Location.latitude, marker.wgs84Location.longtitude]}>
               <Popup>
-                <p>Lat: {marker.originalCoordinates.y}, Lng: {marker.originalCoordinates.x}</p>
+                <p>Y: {marker.originalCoordinates.y}, X: {marker.originalCoordinates.x}</p>
               </Popup>
             </Marker>
-        ))}
+        )) : <></>}
 
         <LayersControl>   {/* eslint-disable-next-line */}
           {maps.map((map, index) => {
@@ -174,7 +187,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
           })}
         </LayersControl>
       </MapContainer>
-      <div className='button__export' onClick={handleExportImage} title='Download map as jpeg' ></div>
-    </div >
+      <div className='button__export' id='export' onClick={handleExportImage} title='Download map as jpeg' ></div>
+    </div>
   );
 }
