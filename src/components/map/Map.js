@@ -1,14 +1,14 @@
 import 'regenerator-runtime';
 import 'leaflet/dist/leaflet.css';
-import leafletImage from 'leaflet-image';
-import { MapContainer, Tooltip, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
-import React from 'react';
 import domtoimage from 'dom-to-image';
+import React from 'react';
+import { MapContainer, Tooltip, TileLayer, Marker, Popup, useMap, useMapEvents, LayersControl, Polyline } from "react-leaflet";
+import urlApiOBJ from '../../utils/epsg-server';
 import { maps } from '../../constants/mapOptions';
 import { greenMarker, blackMarker, blueMarker, customMarker2 } from '../../constants/markers';
 import { calcDistance, shortenString } from '../../constants/functions';
 
-export default function Map({ coords, format, markersCoordinates, bbox, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
+export default function Map({ coords, format, name, markersCoordinates, bbox, setLiveDist, address, isRuler, rulerClick, markerData, setIsEpsgFormFilledFalse, isClickable, findEpsgClick, copyClicked, didCopy, isView, children, setViewFalse }) {
   const { BaseLayer } = LayersControl;
   const mapRef = React.useRef();
   const [rulerCoords, setRulerCoords] = React.useState([[51.505, -0.09], [51.507, -0.08]]);
@@ -29,7 +29,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
       },
     });
     return null;
-  }
+  };
 
   function SetViewOnClick({ coords, isActive, setViewFalse }) {
     const map = useMap();
@@ -40,7 +40,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
     }
 
     return null;
-  }
+  };
 
   function Pointer() {  // eslint-disable-next-line
     const map = useMapEvents({
@@ -57,35 +57,31 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
         }
       },
     });
+  };
+
+  const MapToBlob = async () => {
+    const node = document.getElementById('map');
+    setTimeout(() => {
+      domtoimage.toBlob(node)
+        .then((blob) => {
+          if (blob) {
+            const blobUrl = URL.createObjectURL(blob)
+            const objectName = `${name}-${new Date().getTime()}`;
+            console.log(objectName);
+            urlApiOBJ.createUrl(blobUrl, objectName)
+              .catch((err) => {
+                if (err) {
+                  console.log(err);
+                }
+              })
+          }
+        });
+      // sets the timer for 3 seconds
+    }, 3000);
   }
 
-  const handleExportImage = (evt) => {
-    if (evt) {
-      const node = document.getElementById('map');
-      domtoimage.toPng(node)
-        .then((dataUrl) => {
-          const link = document.createElement('a');
-          link.href = dataUrl;
-          link.download = 'map.png'; // ! downloads the image.png as map.png
-          link.click();
-        })
-        .catch(function (error) {
-          console.error('oops, something went wrong!', error);
-        });
-    }
-    if (mapRef.current) {
-      const map = mapRef.current;
-      leafletImage(map, (err, canvas) => {
-        if (err) {
-          console.error('Error exporting map as image:', err);
-        } else {
-          const link = document.createElement('a');
-          link.href = canvas.toDataURL('image/png');
-          link.download = 'map.png'; // ! downloads the image.png as map.png
-          link.click();
-        }
-      });
-    }
+  const toogleOnOffMarkers = () => {
+    setIsMarker(!isMarkers);
   };
 
   // ? creates one big array of markers
@@ -122,7 +118,7 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
       ];
       map.whenReady(() => {
         map.fitBounds(bounds);
-        handleExportImage();
+        MapToBlob();
       });
     }
   }, [bbox]);
@@ -147,9 +143,9 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
 
         <Tooltip sticky />
         {isMarkers ? <Marker position={coords} icon={blueMarker}>
-          <Popup>
-            {address ? address : `We dont have any information about this location.`}
-          </Popup>
+          {address ? <Popup>
+            {address}
+          </Popup> : <></>}
         </Marker> : <></>}
 
         {isRuler ?
@@ -187,7 +183,8 @@ export default function Map({ coords, format, markersCoordinates, bbox, setLiveD
           })}
         </LayersControl>
       </MapContainer>
-      <div className='button__export' id='export' onClick={handleExportImage} title='Download map as jpeg' ></div>
+      {/* <div className='button__export' id='export' onClick={MapToBlob} title='Download map as jpeg'></div> */}
+      <div className={`button__markers ${isMarkers ? '_active' : ''}`} onClick={toogleOnOffMarkers} title='Markers On/Off' ></div>
     </div>
   );
 }

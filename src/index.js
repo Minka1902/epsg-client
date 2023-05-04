@@ -17,7 +17,7 @@ const getCoordinatesFromUrl = () => {
     return { list: class_list[0].split(',').map(parseFloat) };
   } else {
     fromProj = epsg[`EPSG:${class_list[0]}`];
-    return { x1: class_list[1], y1: class_list[2], x2: class_list[3], y2: class_list[4], format: class_list[5], toProj: toProj, fromProj: fromProj };
+    return { x1: class_list[1], y1: class_list[2], x2: class_list[3], y2: class_list[4], format: class_list[5], toProj: toProj, fromProj: fromProj, name: class_list[6] };
   }
 };
 

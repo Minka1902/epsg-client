@@ -9,6 +9,21 @@
   background-size: 30px;
   position: fixed;
   top: 10px;
+  left: 90px;
+  z-index: 400;
+  border: 1px solid grey;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 30px;
+  height: 30px;
+}
+
+.button__markers {
+  background-image: url('../../images/marker-on-off.svg');
+  background-size: 30px;
+  position: fixed;
+  top: 10px;
   left: 50px;
   z-index: 400;
   border: 1px solid grey;
@@ -19,7 +34,17 @@
   height: 30px;
 }
 
-.button__export:hover{
+.button__markers:hover{
+  cursor: pointer;
+  background-color: #045092;
+  opacity: 0.6;
+}
+
+._active {
+  background-color: #0074d9;
+}
+
+.button__export:hover {
   cursor: pointer;
   opacity: 0.7;
 }

@@ -192,7 +192,7 @@ export const numRescueBoats = (people, limit) => {
 
 // ! 	gets an element and id and returns the class list of the desired element 
 // TODO getClassListById(element, 'ID');
-// ?  	This is a long string with ...
+// ?  	class anotherClass andAnotherClass
 export const getClassListById = (elem, idToFind) => {
     if (elem.id === idToFind) {
         return elem.classList;
@@ -200,3 +200,11 @@ export const getClassListById = (elem, idToFind) => {
         return getClassListById(elem.parentElement, idToFind);
     }
 }
+
+// ! 	gets the number of seconds you want it to wait
+// TODO wait(5)
+// ?  	waits 5 seconds
+export const wait = async (secs) => {
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    await delay(1000 * secs);
+};

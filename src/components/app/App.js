@@ -231,7 +231,7 @@ export default function App({ urlInfo }) {
     } else {
       onCoordinateSubmit({ x: 35.03254, y: 31.89291 });
     }                                                     // eslint-disable-next-line
-  }, [])
+  }, []);
 
   return (
     <div id='content'>
@@ -245,6 +245,7 @@ export default function App({ urlInfo }) {
         markersCoordinates={markersCoordinates}
         bbox={boundingBox}
         format={format ? format : 'standart'}
+        name={urlInfo.name ? urlInfo.name : 'generate-image'}
         rulerClick={rulerClick}
         findEpsgClick={clickLocation}
         copyClicked={copyCoordsClick}
