@@ -1,10 +1,11 @@
 class urlApi {
     constructor() {
         this._path = '/url';
+        this._rootUrl = window.origin;
     }
 
     _fetch = ({ method = "GET", data = null, path = this._path }) =>
-        fetch(`http://localhost:4000${path}`, {
+        fetch(`${this._rootUrl}${path}`, {
             method: method,
             body: JSON.stringify(data),
             headers: {
@@ -14,7 +15,7 @@ class urlApi {
         }).then(this._handleResponse)
 
     _fetchNoBody = ({ method = "GET", path = this._path }) =>
-        fetch(`http://localhost:4000${path}`, {
+        fetch(`${this._rootUrl}${path}`, {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
@@ -26,11 +27,13 @@ class urlApi {
 
     _handleError = (err) => Promise.reject(err);
 
-    createUrl = (url, name) => this._fetch({ method: "POST", data: { url: url, name: name }, path: '/url' });
+    createUrl = (url, name, bbox) => this._fetch({ method: "POST", data: { url: url, name: name, coordinates: bbox }, path: '/url' });
 
     deleteUrl = (id) => this._fetch({ method: "DELETE", path: `/url/${id}` });
 
     getUrl = (id) => this._fetchNoBody({ method: 'GET', path: `/url/${id}` });
+
+    getByName = (name) => this._fetchNoBody({ method: 'GET', path: `/find/${name}` });
 }
 
 const urlApiOBJ = new urlApi();

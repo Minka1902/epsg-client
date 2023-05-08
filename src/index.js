@@ -10,14 +10,21 @@ const getCoordinatesFromUrl = () => {
   let toProj = epsg[`EPSG:4326`];
   let fromProj;
   let class_list = [...root._internalRoot.containerInfo.classList];
-  for (let i = 0; i < class_list.length; i++) {
-    root._internalRoot.containerInfo.classList.remove(class_list[i]);
+  if (root._internalRoot.containerInfo.classList.length !== 0) {
+    for (let i = 0; i < class_list.length; i++) {
+      root._internalRoot.containerInfo.classList.remove(class_list[i]);
+    }
   }
-  if (class_list.length === 1) {
+  if (class_list.length === 1 && class_list[0].value !== '') {
     return { list: class_list[0].split(',').map(parseFloat) };
   } else {
-    fromProj = epsg[`EPSG:${class_list[0]}`];
-    return { x1: class_list[1], y1: class_list[2], x2: class_list[3], y2: class_list[4], format: class_list[5], toProj: toProj, fromProj: fromProj, name: class_list[6] };
+    if (class_list.length !== 0 && class_list[0].value !== '') {
+      fromProj = epsg[`EPSG:${class_list[0]}`];
+      return { x1: class_list[1], y1: class_list[2], x2: class_list[3], y2: class_list[4], format: class_list[5], toProj: toProj, fromProj: fromProj, name: class_list[6] };
+    }
+    else {
+      return {};
+    }
   }
 };
 
