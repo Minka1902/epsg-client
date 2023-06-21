@@ -1,7 +1,7 @@
 class urlApi {
     constructor() {
         this._path = '/url';
-        this._rootUrl = window.origin;
+        this._rootUrl = window.origin === "http://localhost:3000" ? "http://localhost:4000" : window.origin;
     }
 
     _fetch = ({ method = "GET", data = null, path = this._path }) =>
@@ -27,7 +27,7 @@ class urlApi {
 
     _handleError = (err) => Promise.reject(err);
 
-    createUrl = (url, name, bbox) => this._fetch({ method: "POST", data: { url: url, name: name, coordinates: bbox }, path: '/url' });
+    createUrl = (url, name) => this._fetch({ method: "POST", data: { url: url, name: name }, path: '/url' });
 
     deleteUrl = (id) => this._fetch({ method: "DELETE", path: `/url/${id}` });
 

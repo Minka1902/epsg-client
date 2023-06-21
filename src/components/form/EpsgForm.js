@@ -56,7 +56,7 @@ export default function LatLonForm(props) {
                 }
             }
         }
-    }
+    };
 
     // ! Validating the form
     React.useEffect(() => {
@@ -108,6 +108,20 @@ export default function LatLonForm(props) {
             />
             <p className={`error-massage${isEpsgInputCorrect ? '' : '_visible'}`}>EPSG incorrect</p>
 
+            <h3 className='input-title'>X coordinate:</h3>
+            <input
+                className="form__input"
+                placeholder="Enter X coordinates"
+                id="latitude-input"
+                type="text"
+                name="latitudeInput"
+                minLength="2"
+                maxLength="40"
+                value={latitudeInput}
+                onChange={(evt) => setLatitudeInput(evt.currentTarget.value)}
+            />
+            <p className={`error-massage${isLatitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 1200 ? 'Incorrect' : 'Latitude incorrect'}</p>
+            
             <h3 className='input-title'>Y coordinate:</h3>
             <input
                 className="form__input"
@@ -122,19 +136,6 @@ export default function LatLonForm(props) {
             />
             <p className={`error-massage${isLongtitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 1200 ? 'Incorrect' : 'Longtitude incorrect'}</p>
 
-            <h3 className='input-title'>X coordinate:</h3>
-            <input
-                className="form__input"
-                placeholder="Enter X coordinates"
-                id="latitude-input"
-                type="text"
-                name="latitudeInput"
-                minLength="2"
-                maxLength="40"
-                value={latitudeInput}
-                onChange={(evt) => setLatitudeInput(evt.currentTarget.value)}
-            />
-            <p className={`error-massage${isLatitudeInputCorrect ? '' : '_visible'}`}>{window.innerHeight <= 1200 ? 'Incorrect' : 'Latitude incorrect'}</p>
             <button onClick={onFormSubmit} type="submit" name="search-coord" className={`form__button${isFormValid ? '' : '_invalid'}`}>
                 Find Coordinates
             </button>

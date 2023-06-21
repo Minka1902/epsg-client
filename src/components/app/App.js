@@ -149,7 +149,7 @@ export default function App({ urlInfo }) {
     let arr = [];
     const { x, y } = form;
     let newEpsgObj = {};
-    for (let i = 0; i < 33000; i++) {
+    for (let i = 0; i < 66000; i++) {
       newEpsgObj.epsg = `EPSG:${2000 + i}`;
       const fromProj = epsg[`EPSG:${2000 + i}`];
       if (fromProj) {
@@ -191,7 +191,7 @@ export default function App({ urlInfo }) {
     }
   };
 
-  // ! Calculates the air distance between the pointer and the cursor
+  // ! Calculates the distance between the pointer and the cursor
   const rulerClick = (evt) => {
     if (evt) {
       const lat1 = evt.latlng.lat, lon1 = evt.latlng.lng;
@@ -244,7 +244,7 @@ export default function App({ urlInfo }) {
         isPointer={isPointer}
         markersCoordinates={markersCoordinates}
         bbox={boundingBox}
-        format={format ? format : 'standart'}
+        format={format ? format : 'standard'}
         name={urlInfo.name ? urlInfo.name : 'generate-image'}
         rulerClick={rulerClick}
         findEpsgClick={clickLocation}
@@ -255,7 +255,7 @@ export default function App({ urlInfo }) {
         markerData={epsgTable}>
         {isPointer ? <img src={Pointer} alt='Map pointer' className='app__map-pointer' /> : <></>}
       </Map>
-      <div className='app__conteiner'>
+      <div className='app__container'>
         <ButtonBox isModi={copyCoords ? false : true}
           didCopy={didCopy}
           isPointer={isPointer}

@@ -66,7 +66,10 @@ export default function Map({ coords, format, name, markersCoordinates, bbox, se
         .then((blob) => {
           if (blob) {
             const blobUrl = URL.createObjectURL(blob)
-            urlApiOBJ.createUrl(blobUrl, name, bbox)
+            urlApiOBJ.createUrl(blobUrl, name)
+              .then((data) => {
+                console.log(data);
+              })
               .catch((err) => {
                 if (err) {
                   console.log(err);
