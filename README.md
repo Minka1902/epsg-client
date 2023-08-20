@@ -1,20 +1,23 @@
 # epsg-server
-epsg-finder is a Geomage-2003 LTD website that lets its users the option to automatically take a picture of the location of their choosing and see multiple locations with a changing EPSG code.
+epsg-finder is a Geomage-2003 LTD app that lets its users the option to automatically take a picture of the location of their choosing and see multiple locations with a changing EPSG code.
 
 ## How to use the Lat/Lng form:
 ### How to use it:
     1) Open the form.
     2) Enter the Latitude and Longtitude, and submit the form.
     3) Submit the form.
+    
 ### What to expect:
     1) On the map you will see a marker positioned according to the coordinates you entered.
+    
 ## How to find EPSG code with XY and location:
 ### Properties:
     1) x: X coordinate you have.
     2) y: Y coordinate you have.
     3) location: click the locaion you know.
+    
 ### How to use it:
-    1) In the EPSG form in the website choose the Manual option.
+    1) In the EPSG form in the app choose the Manual option.
     2) Enter the X and Y coordinates, and submit the form.
     3) Once you did that the gray button that said "Please fill EPSG form" will become blue.
     4) Click this button and after that choose your location on the map. 
@@ -22,7 +25,6 @@ epsg-finder is a Geomage-2003 LTD website that lets its users the option to auto
 ### What to expect:
     1) Under the form you will see a table with Possible EPSG and Distance headers.
     2) On the map you will see markers positioned according to the epsg codes in the table and the X Y you entered.
-
 
 ## The /generate function:
 ### Properties:
@@ -47,8 +49,7 @@ epsg-finder is a Geomage-2003 LTD website that lets its users the option to auto
         "url": "blob:http://89.169.96.143:4000/bfbd5fa9-cf19-44cf-a149-d12e7776d5f3",
         "name": "minka1902"
     }
-
-
+    
 ## The /coordinates function:
 ### Properties:
     1) list: in this list you enter all the coordinates you want X coordinate and then Y coordinate.
