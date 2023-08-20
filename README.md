@@ -1,70 +1,69 @@
-# Getting Started with Create React App
+# epsg-server
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+epsg-finder is a Geomage-2003 LTD website that lets its users the option to automatically take a picture of the location of their choosing and see multiple locations with a changing EPSG code.
 
-## Available Scripts
+How to use the Lat/Lng form:
+► How to use it:
+    1) Open the form.
+    2) Enter the Latitude and Longtitude, and submit the form.
+    3) Submit the form.
 
-In the project directory, you can run:
+► What to expect:
+    1) On the map you will see a marker positioned according to the coordinates you entered.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+How to find EPSG code with XY and location:
+► Properties:
+    1) x: X coordinate you have.
+    2) y: Y coordinate you have.
+    3) location: click the locaion you know.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+► How to use it:
+    1) In the EPSG form in the website choose the Manual option.
+    2) Enter the X and Y coordinates, and submit the form.
+    3) Once you did that the gray button that said "Please fill EPSG form" will become blue.
+    4) Click this button and after that choose your location on the map. 
 
-### `npm test`
+► What to expect:
+    1) Under the form you will see a table with Possible EPSG and Distance headers.
+    2) On the map you will see markers positioned according to the epsg codes in the table and the X Y you entered.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+The /generate function:
+► Properties:
+    1) epsg: epsg code of the coordinates incoming.
+    2) x1: X coordinate of the first coordinate.
+    3) y1: Y coordinate of the first coordinate.
+    4) x2: X coordinate of the second coordinate.
+    5) y2: Y coordinate of the second coordinate.
+    6) format: format of the map you want to see, you can use: standart(default), topography and satellite.
+    7) name: name of the image created, using this name you will get the image URL (default: generate-image).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+► How to use it:
+    1) You make a request: /generate?epsg=<EPSG code>&x1=<X1>&y1=<Y1>&x2=<X2>&y2=<Y2>&format=standart&name=<name of your coosing>.
+       This request creates a object with the name you chose.
+    2) You make a request: /find/<name of your coosing>.
+       This request gives you the URL of the image you created.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+► What to expect:
+    You should expect an JSON object with the url, name and _id properties in it, it'll look like this:
+    {
+        "_id": "6458e4361b8a7e87899510cc",
+        "url": "blob:http://89.169.96.143:4000/bfbd5fa9-cf19-44cf-a149-d12e7776d5f3",
+        "name": "minka1902"
+    }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+The /coordinates function:
+► Properties:
+    1) list: in this list you enter all the coordinates you want X coordinate and then Y coordinate.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+► How to use it:
+    1) You make a request: /coordinates?list=<X1>,<Y1>,<X2>,<Y2>,<X3>,<Y3>,<X4>,<Y4>.
+       This request creates as much markers as you entered, according to the coordinates.
+    2) In the EPSG form in the website choose the Manual option.
+    3) Fill ONLY the EPSG input and submit the form.
+    4) You can repeat with different EPSG codes.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+► What to expect:
+    You will see Markers on the map according to the coordinates and EPSG code you entered.
